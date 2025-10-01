@@ -1,6 +1,7 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 
@@ -8,9 +9,10 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function FooterNav() {
   const navigation = useNavigation<NavigationProp>();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <TouchableOpacity 
         style={styles.navItem} 
         onPress={() => navigation.navigate("Home")}

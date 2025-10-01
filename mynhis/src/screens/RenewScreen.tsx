@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "rea
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
 
@@ -11,6 +12,7 @@ export default function RenewScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [selectedPlan, setSelectedPlan] = useState('standard');
   const [selectedPayment, setSelectedPayment] = useState('mobile-money');
+  const insets = useSafeAreaInsets();
 
   const handleRenewNow = () => {
     const planName = selectedPlan === 'standard' ? 'Standard Plan' : 'Premium Plan';
@@ -59,7 +61,7 @@ export default function RenewScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 

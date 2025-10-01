@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "reac
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
 
@@ -11,6 +12,7 @@ export default function LinkGhanaCardScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [ghanaCardNumber, setGhanaCardNumber] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const insets = useSafeAreaInsets();
 
   const handleLinkCard = () => {
     if (!ghanaCardNumber.trim() || !verificationCode.trim()) {
@@ -48,7 +50,7 @@ export default function LinkGhanaCardScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 

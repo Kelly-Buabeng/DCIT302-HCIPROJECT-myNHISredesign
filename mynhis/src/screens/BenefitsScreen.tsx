@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
@@ -17,6 +18,7 @@ interface Benefit {
 
 export default function BenefitsScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const insets = useSafeAreaInsets();
 
   const benefits: Benefit[] = [
     {
@@ -56,7 +58,7 @@ export default function BenefitsScreen() {
     },
     {
       id: "6",
-      iconName: "local-ambulance",
+      iconName: "emergency",
       iconLibrary: "MaterialIcons",
       title: "Emergency Services",
       description: "Coverage for emergency medical situations"
@@ -84,7 +86,7 @@ export default function BenefitsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 

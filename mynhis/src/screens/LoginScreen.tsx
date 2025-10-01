@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -10,6 +11,7 @@ export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const insets = useSafeAreaInsets();
 
   const handleLogin = () => {
     if (!username.trim() || !password.trim()) {
@@ -43,7 +45,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -99,7 +101,7 @@ export default function LoginScreen() {
 
         <View style={styles.bottomSpacing} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
