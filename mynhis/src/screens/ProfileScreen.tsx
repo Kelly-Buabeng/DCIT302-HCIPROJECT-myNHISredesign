@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import FooterNav from "../components/FooterNav";
 import { profile } from "../data/dummyData";
 import { RootStackParamList } from "../types/navigation";
+import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -82,31 +83,31 @@ export default function ProfileScreen() {
             <Text style={styles.sectionTitle}>Account Settings</Text>
             
             <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionIcon}>✏️</Text>
+              <MaterialIcons name="edit" size={20} color="#666" style={styles.actionIcon} />
               <Text style={styles.actionText}>Edit Profile</Text>
               <Text style={styles.actionArrow}>›</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionIcon}>🔒</Text>
+              <MaterialIcons name="lock" size={20} color="#666" style={styles.actionIcon} />
               <Text style={styles.actionText}>Change Password</Text>
               <Text style={styles.actionArrow}>›</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionIcon}>🔔</Text>
+              <MaterialIcons name="notifications" size={20} color="#666" style={styles.actionIcon} />
               <Text style={styles.actionText}>Notifications</Text>
               <Text style={styles.actionArrow}>›</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionIcon}>📞</Text>
+              <MaterialIcons name="phone" size={20} color="#666" style={styles.actionIcon} />
               <Text style={styles.actionText}>Contact Support</Text>
               <Text style={styles.actionArrow}>›</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={[styles.actionButton, styles.logoutButton]} onPress={handleLogout}>
-              <Text style={styles.actionIcon}>🚪</Text>
+              <MaterialIcons name="logout" size={20} color="#dc3545" style={styles.actionIcon} />
               <Text style={[styles.actionText, styles.logoutText]}>Logout</Text>
               <Text style={styles.actionArrow}>›</Text>
             </TouchableOpacity>
@@ -224,7 +225,6 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   actionIcon: {
-    fontSize: 20,
     marginRight: 12,
   },
   actionText: {

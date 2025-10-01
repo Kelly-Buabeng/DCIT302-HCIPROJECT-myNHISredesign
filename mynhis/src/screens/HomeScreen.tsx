@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
+import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -69,7 +70,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Renew")}
           >
             <View style={styles.actionIcon}>
-              <Text style={styles.iconText}>📅</Text>
+              <MaterialIcons name="event" size={24} color="#007bff" />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Renew Membership</Text>
@@ -82,7 +83,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Claims")}
           >
             <View style={styles.actionIcon}>
-              <Text style={styles.iconText}>🔍</Text>
+              <MaterialIcons name="search" size={24} color="#007bff" />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Track Claims</Text>
@@ -95,7 +96,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Membership")}
           >
             <View style={styles.actionIcon}>
-              <Text style={styles.iconText}>👥</Text>
+              <MaterialIcons name="group" size={24} color="#007bff" />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Manage Dependents</Text>
@@ -108,7 +109,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("LinkGhanaCard")}
           >
             <View style={styles.actionIcon}>
-              <Text style={styles.iconText}>🆔</Text>
+              <MaterialIcons name="badge" size={24} color="#007bff" />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Link Ghana Card</Text>
@@ -264,9 +265,6 @@ const styles = StyleSheet.create({
   },
   actionIcon: {
     marginBottom: 12,
-  },
-  iconText: {
-    fontSize: 24,
   },
   actionContent: {
     gap: 4,

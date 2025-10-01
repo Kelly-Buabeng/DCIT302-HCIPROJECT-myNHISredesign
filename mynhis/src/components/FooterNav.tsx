@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
+import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -15,7 +16,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Home")}
       >
         <View style={[styles.iconContainer, styles.activeIcon]}>
-          <Text style={[styles.iconText, styles.activeIconText]}>🏠</Text>
+          <MaterialIcons name="home" size={24} color="#141414" />
         </View>
         <Text style={[styles.navText, styles.activeNavText]}>Home</Text>
       </TouchableOpacity>
@@ -25,7 +26,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Benefits")}
       >
         <View style={styles.iconContainer}>
-          <Text style={styles.iconText}>❤️</Text>
+          <MaterialIcons name="favorite" size={24} color="#757575" />
         </View>
         <Text style={styles.navText}>Benefits</Text>
       </TouchableOpacity>
@@ -35,7 +36,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Renew")}
       >
         <View style={styles.iconContainer}>
-          <Text style={styles.iconText}>🔄</Text>
+          <MaterialIcons name="refresh" size={24} color="#757575" />
         </View>
         <Text style={styles.navText}>Renew</Text>
       </TouchableOpacity>
@@ -45,7 +46,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Profile")}
       >
         <View style={styles.iconContainer}>
-          <Text style={styles.iconText}>👤</Text>
+          <MaterialIcons name="person" size={24} color="#757575" />
         </View>
         <Text style={styles.navText}>Profile</Text>
       </TouchableOpacity>
@@ -77,12 +78,6 @@ const styles = StyleSheet.create({
   },
   activeIcon: {
     // Add any active icon styling here
-  },
-  iconText: {
-    fontSize: 20,
-  },
-  activeIconText: {
-    // Active icon text styling
   },
   navText: {
     color: '#757575',

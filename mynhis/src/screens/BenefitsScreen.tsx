@@ -3,12 +3,14 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
+import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Benefit {
   id: string;
-  icon: string;
+  iconName: string;
+  iconLibrary: 'MaterialIcons' | 'FontAwesome' | 'Ionicons';
   title: string;
   description: string;
 }
@@ -19,53 +21,67 @@ export default function BenefitsScreen() {
   const benefits: Benefit[] = [
     {
       id: "1",
-      icon: "🩺",
+      iconName: "local-hospital",
+      iconLibrary: "MaterialIcons",
       title: "Medical Consultations",
       description: "Access to a wide range of medical services"
     },
     {
       id: "2",
-      icon: "💊",
+      iconName: "medication",
+      iconLibrary: "MaterialIcons",
       title: "Prescription Drugs",
       description: "Coverage for essential medications"
     },
     {
       id: "3",
-      icon: "🛏️",
+      iconName: "hotel",
+      iconLibrary: "MaterialIcons",
       title: "Hospitalization",
       description: "Inpatient care and hospital stays"
     },
     {
       id: "4",
-      icon: "🧪",
+      iconName: "biotech",
+      iconLibrary: "MaterialIcons",
       title: "Laboratory Services",
       description: "Coverage for diagnostic tests"
     },
     {
       id: "5",
-      icon: "👶",
+      iconName: "child-friendly",
+      iconLibrary: "MaterialIcons",
       title: "Maternity Care",
       description: "Maternity care and childbirth services"
     },
     {
       id: "6",
-      icon: "🚑",
+      iconName: "local-ambulance",
+      iconLibrary: "MaterialIcons",
       title: "Emergency Services",
       description: "Coverage for emergency medical situations"
     }
   ];
 
-  const BenefitItem = ({ benefit }: { benefit: Benefit }) => (
-    <View style={styles.benefitItem}>
-      <View style={styles.iconContainer}>
-        <Text style={styles.iconText}>{benefit.icon}</Text>
+  const BenefitItem = ({ benefit }: { benefit: Benefit }) => {
+    const IconComponent = benefit.iconLibrary === 'MaterialIcons' 
+      ? MaterialIcons 
+      : benefit.iconLibrary === 'FontAwesome' 
+      ? FontAwesome 
+      : Ionicons;
+
+    return (
+      <View style={styles.benefitItem}>
+        <View style={styles.iconContainer}>
+          <IconComponent name={benefit.iconName as any} size={32} color="#007bff" />
+        </View>
+        <View style={styles.benefitContent}>
+          <Text style={styles.benefitTitle}>{benefit.title}</Text>
+          <Text style={styles.benefitDescription}>{benefit.description}</Text>
+        </View>
       </View>
-      <View style={styles.benefitContent}>
-        <Text style={styles.benefitTitle}>{benefit.title}</Text>
-        <Text style={styles.benefitDescription}>{benefit.description}</Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -148,10 +164,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-  },
-  iconText: {
-    fontSize: 24,
-    color: '#141414',
   },
   benefitContent: {
     flex: 1,
