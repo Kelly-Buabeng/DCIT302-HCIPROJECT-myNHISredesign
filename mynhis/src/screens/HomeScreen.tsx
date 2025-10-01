@@ -20,12 +20,19 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.profileContainer}>
-            <View style={styles.profileAvatar} />
+            <Image
+              source={{
+                uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face&auto=format'
+              }}
+              style={styles.profileImage}
+              resizeMode="cover"
+            />
           </View>
           <View style={styles.headerRight}>
-            <TouchableOpacity style={styles.signalButton}>
-              <View style={styles.signalIcon} />
-            </TouchableOpacity>
+            <View style={styles.nhisLogoContainer}>
+              <MaterialIcons name="local-hospital" size={16} color="#ffffff" />
+              <Text style={styles.logoText}>NHIS</Text>
+            </View>
           </View>
         </View>
 
@@ -43,6 +50,83 @@ export default function HomeScreen() {
             thumbColor="#ffffff"
           />
         </View>
+
+        {/* Toggleable Digital ID Card */}
+        {isToggleOn && (
+          <View style={styles.digitalIdContainer}>
+            <View style={styles.digitalIdCard}>
+              {/* Card Header */}
+              <View style={styles.digitalIdHeader}>
+                <View style={styles.nhisLogo}>
+                  <MaterialIcons name="local-hospital" size={20} color="#ffffff" />
+                </View>
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.cardHeaderTitle}>NHIS DIGITAL ID</Text>
+                  <Text style={styles.cardHeaderSubtitle}>National Health Insurance Scheme</Text>
+                </View>
+                <View style={styles.cardChip}>
+                  <MaterialIcons name="credit-card" size={16} color="#FFD700" />
+                </View>
+              </View>
+
+              {/* Member Information */}
+              <View style={styles.memberInfoSection}>
+                <View style={styles.memberPhotoContainer}>
+                  <View style={styles.memberPhoto}>
+                    <MaterialIcons name="person" size={32} color="#ffffff" />
+                  </View>
+                </View>
+                <View style={styles.memberDetails}>
+                  <Text style={styles.memberName}>KWAME BOATENG</Text>
+                  <Text style={styles.memberTitle}>Principal Member</Text>
+                </View>
+              </View>
+
+              {/* ID Information */}
+              <View style={styles.idInfoSection}>
+                <View style={styles.idRow}>
+                  <Text style={styles.idLabel}>NHIS Number:</Text>
+                  <Text style={styles.idValue}>321-098-765-432</Text>
+                </View>
+                <View style={styles.idRow}>
+                  <Text style={styles.idLabel}>Ghana Card:</Text>
+                  <Text style={styles.idValue}>GHA-123456789-0</Text>
+                </View>
+                <View style={styles.idRow}>
+                  <Text style={styles.idLabel}>Valid Until:</Text>
+                  <Text style={styles.idValue}>31/12/2025</Text>
+                </View>
+                <View style={styles.idRow}>
+                  <Text style={styles.idLabel}>Status:</Text>
+                  <View style={styles.statusContainer}>
+                    <View style={styles.statusDot} />
+                    <Text style={styles.statusText}>ACTIVE</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* QR Code Section */}
+              <View style={styles.qrSection}>
+                <View style={styles.qrCode}>
+                  <View style={styles.qrPattern}>
+                    <View style={[styles.qrDot, { top: 2, left: 2 }]} />
+                    <View style={[styles.qrDot, { top: 2, right: 2 }]} />
+                    <View style={[styles.qrDot, { bottom: 2, left: 2 }]} />
+                    <View style={[styles.qrDot, { top: 10, left: 10 }]} />
+                    <View style={[styles.qrDot, { top: 15, right: 8 }]} />
+                    <View style={[styles.qrDot, { bottom: 8, right: 6 }]} />
+                  </View>
+                </View>
+                <Text style={styles.qrText}>Scan for verification</Text>
+              </View>
+
+              {/* Card Footer */}
+              <View style={styles.cardFooter}>
+                <Text style={styles.footerText}>Republic of Ghana • Ministry of Health</Text>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* NHIS Card */}
         <View style={styles.cardContainer}>
@@ -152,25 +236,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  profileAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#4CAF50',
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
   },
   headerRight: {
     width: 48,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
-  signalButton: {
-    padding: 8,
+  nhisLogoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2C5F2D',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
+    gap: 4,
   },
-  signalIcon: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#141414',
-    borderRadius: 4,
+  logoText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   welcomeText: {
     color: '#141414',
@@ -200,6 +290,163 @@ const styles = StyleSheet.create({
     color: '#141414',
     fontSize: 16,
     flex: 1,
+  },
+  digitalIdContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+  },
+  digitalIdCard: {
+    backgroundColor: '#2C5F2D',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  digitalIdHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  nhisLogo: {
+    width: 32,
+    height: 32,
+    backgroundColor: '#ffffff',
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTextContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  cardHeaderTitle: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  cardHeaderSubtitle: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 10,
+    marginTop: 2,
+  },
+  cardChip: {
+    width: 24,
+    height: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  memberInfoSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  memberPhotoContainer: {
+    marginRight: 16,
+  },
+  memberPhoto: {
+    width: 60,
+    height: 60,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  memberDetails: {
+    flex: 1,
+  },
+  memberName: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  memberTitle: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 14,
+  },
+  idInfoSection: {
+    marginBottom: 20,
+  },
+  idRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  idLabel: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  idValue: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#4CAF50',
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  statusText: {
+    color: '#4CAF50',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  qrSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  qrCode: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#ffffff',
+    borderRadius: 6,
+    position: 'relative',
+  },
+  qrPattern: {
+    flex: 1,
+    position: 'relative',
+  },
+  qrDot: {
+    width: 4,
+    height: 4,
+    backgroundColor: '#000000',
+    borderRadius: 1,
+    position: 'absolute',
+  },
+  qrText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 10,
+    marginLeft: 12,
+  },
+  cardFooter: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    paddingTop: 12,
+    alignItems: 'center',
+  },
+  footerText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 10,
+    textAlign: 'center',
   },
   cardContainer: {
     padding: 16,
@@ -247,7 +494,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingHorizontal: 16,
     paddingBottom: 12,
-    paddingTop: 20,
+    paddingTop: 4,
   },
   actionsGrid: {
     flexDirection: 'row',

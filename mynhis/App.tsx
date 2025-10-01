@@ -1,4 +1,4 @@
-// import "./global.css";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import RenewScreen from "./src/screens/RenewScreen";
 import LinkGhanaCardScreen from "./src/screens/LinkGhanaCardScreen";
 import BenefitsScreen from "./src/screens/BenefitsScreen";
 import RenewalConfirmationScreen from "./src/screens/RenewalConfirmationScreen";
+import GhanaCardLinkedScreen from "./src/screens/GhanaCardLinkedScreen";
 import { RootStackParamList } from "./src/types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -31,6 +32,7 @@ export default function App() {
           <Stack.Screen name="LinkGhanaCard" component={LinkGhanaCardScreen} />
           <Stack.Screen name="Benefits" component={BenefitsScreen} />
           <Stack.Screen name="RenewalConfirmation" component={RenewalConfirmationScreen} />
+          <Stack.Screen name="GhanaCardLinked" component={GhanaCardLinkedScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

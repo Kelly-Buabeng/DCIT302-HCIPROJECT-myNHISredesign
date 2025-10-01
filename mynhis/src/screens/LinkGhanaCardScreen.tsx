@@ -43,7 +43,7 @@ export default function LinkGhanaCardScreen() {
       [
         {
           text: "OK",
-          onPress: () => navigation.goBack()
+          onPress: () => navigation.navigate("GhanaCardLinked")
         }
       ]
     );
