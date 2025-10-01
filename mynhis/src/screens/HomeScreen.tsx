@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
+import Colors from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -30,7 +31,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.headerRight}>
             <View style={styles.nhisLogoContainer}>
-              <MaterialIcons name="local-hospital" size={16} color="#ffffff" />
+              <MaterialIcons name="local-hospital" size={16} color={Colors.textInverse} />
               <Text style={styles.logoText}>NHIS</Text>
             </View>
           </View>
@@ -46,8 +47,8 @@ export default function HomeScreen() {
           <Switch
             value={isToggleOn}
             onValueChange={setIsToggleOn}
-            trackColor={{ false: '#f2f2f2', true: '#808080' }}
-            thumbColor="#ffffff"
+            trackColor={{ false: Colors.backgroundTertiary, true: Colors.primary }}
+            thumbColor={Colors.background}
           />
         </View>
 
@@ -58,7 +59,7 @@ export default function HomeScreen() {
               {/* Card Header */}
               <View style={styles.digitalIdHeader}>
                 <View style={styles.nhisLogo}>
-                  <MaterialIcons name="local-hospital" size={20} color="#ffffff" />
+                  <MaterialIcons name="local-hospital" size={20} color={Colors.textInverse} />
                 </View>
                 <View style={styles.headerTextContainer}>
                   <Text style={styles.cardHeaderTitle}>NHIS DIGITAL ID</Text>
@@ -73,7 +74,7 @@ export default function HomeScreen() {
               <View style={styles.memberInfoSection}>
                 <View style={styles.memberPhotoContainer}>
                   <View style={styles.memberPhoto}>
-                    <MaterialIcons name="person" size={32} color="#ffffff" />
+                    <MaterialIcons name="person" size={32} color={Colors.textInverse} />
                   </View>
                 </View>
                 <View style={styles.memberDetails}>
@@ -156,7 +157,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Renew")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="event" size={24} color="#007bff" />
+              <MaterialIcons name="event" size={24} color={Colors.secondary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Renew Membership</Text>
@@ -169,7 +170,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Claims")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="search" size={24} color="#007bff" />
+              <MaterialIcons name="search" size={24} color={Colors.secondary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Track Claims</Text>
@@ -182,7 +183,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Membership")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="group" size={24} color="#007bff" />
+              <MaterialIcons name="group" size={24} color={Colors.secondary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Manage Dependents</Text>
@@ -195,7 +196,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("LinkGhanaCard")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="badge" size={24} color="#007bff" />
+              <MaterialIcons name="badge" size={24} color={Colors.secondary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Link Ghana Card</Text>
@@ -216,7 +217,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 8,
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#4CAF50',
+    borderColor: Colors.primary,
   },
   headerRight: {
     width: 48,
@@ -251,19 +252,19 @@ const styles = StyleSheet.create({
   nhisLogoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2C5F2D',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 8,
     paddingVertical: 6,
     borderRadius: 6,
     gap: 4,
   },
   logoText: {
-    color: '#ffffff',
+    color: Colors.textInverse,
     fontSize: 12,
     fontWeight: 'bold',
   },
   welcomeText: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 24,
     fontWeight: 'bold',
     paddingHorizontal: 16,
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   nameText: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 28,
     fontWeight: 'bold',
     paddingHorizontal: 16,
@@ -282,12 +283,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
   toggleText: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 16,
     flex: 1,
   },
@@ -296,10 +297,10 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   digitalIdCard: {
-    backgroundColor: '#2C5F2D',
+    backgroundColor: Colors.primary,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   cardHeaderTitle: {
-    color: '#ffffff',
+    color: Colors.textInverse,
     fontSize: 14,
     fontWeight: 'bold',
     letterSpacing: 1,
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   memberName: {
-    color: '#ffffff',
+    color: Colors.textInverse,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   idValue: {
-    color: '#ffffff',
+    color: Colors.textInverse,
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -399,12 +400,12 @@ const styles = StyleSheet.create({
   statusDot: {
     width: 8,
     height: 8,
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.success,
     borderRadius: 4,
     marginRight: 6,
   },
   statusText: {
-    color: '#4CAF50',
+    color: Colors.success,
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -417,7 +418,7 @@ const styles = StyleSheet.create({
   qrCode: {
     width: 40,
     height: 40,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.background,
     borderRadius: 6,
     position: 'relative',
   },
@@ -452,10 +453,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   nhisCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -473,18 +474,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   expiryText: {
-    color: '#757575',
+    color: Colors.textTertiary,
     fontSize: 14,
     marginBottom: 4,
   },
   membershipTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   membershipDescription: {
-    color: '#757575',
+    color: Colors.textTertiary,
     fontSize: 16,
     lineHeight: 22,
   },
@@ -505,10 +506,10 @@ const styles = StyleSheet.create({
   actionCard: {
     flex: 1,
     minWidth: 158,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: Colors.border,
     padding: 16,
     marginBottom: 12,
   },
@@ -519,12 +520,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   actionTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 16,
     fontWeight: 'bold',
   },
   actionSubtitle: {
-    color: '#757575',
+    color: Colors.textTertiary,
     fontSize: 14,
   },
   bottomSpacing: {

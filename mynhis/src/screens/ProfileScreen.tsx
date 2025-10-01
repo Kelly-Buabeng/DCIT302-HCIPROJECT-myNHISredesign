@@ -7,6 +7,7 @@ import FooterNav from "../components/FooterNav";
 import { profile } from "../data/dummyData";
 import { RootStackParamList } from "../types/navigation";
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
+import Colors from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -107,7 +108,7 @@ export default function ProfileScreen() {
             <View style={styles.infoCard}>
               <View style={styles.infoRow}>
                 <View style={styles.infoIconContainer}>
-                  <MaterialIcons name="email" size={20} color="#4CAF50" />
+                  <MaterialIcons name="email" size={20} color={Colors.primary} />
                 </View>
                 <View style={styles.infoTextContainer}>
                   <Text style={styles.infoLabel}>Email Address</Text>
@@ -119,7 +120,7 @@ export default function ProfileScreen() {
               
               <View style={styles.infoRow}>
                 <View style={styles.infoIconContainer}>
-                  <MaterialIcons name="phone" size={20} color="#4CAF50" />
+                  <MaterialIcons name="phone" size={20} color={Colors.primary} />
                 </View>
                 <View style={styles.infoTextContainer}>
                   <Text style={styles.infoLabel}>Phone Number</Text>
@@ -131,7 +132,7 @@ export default function ProfileScreen() {
               
               <View style={styles.infoRow}>
                 <View style={styles.infoIconContainer}>
-                  <MaterialIcons name="badge" size={20} color="#4CAF50" />
+                  <MaterialIcons name="badge" size={20} color={Colors.primary} />
                 </View>
                 <View style={styles.infoTextContainer}>
                   <Text style={styles.infoLabel}>NHIS Number</Text>
@@ -143,7 +144,7 @@ export default function ProfileScreen() {
               
               <View style={styles.infoRow}>
                 <View style={styles.infoIconContainer}>
-                  <MaterialIcons name="credit-card" size={20} color="#4CAF50" />
+                  <MaterialIcons name="credit-card" size={20} color={Colors.primary} />
                 </View>
                 <View style={styles.infoTextContainer}>
                   <Text style={styles.infoLabel}>Ghana Card</Text>
@@ -160,7 +161,7 @@ export default function ProfileScreen() {
             <View style={styles.actionGroup}>
               <TouchableOpacity style={styles.actionButton}>
                 <View style={styles.actionIconContainer}>
-                  <MaterialIcons name="security" size={22} color="#4CAF50" />
+                  <MaterialIcons name="security" size={22} color={Colors.primary} />
                 </View>
                 <View style={styles.actionContent}>
                   <Text style={styles.actionText}>Security & Privacy</Text>
@@ -171,7 +172,7 @@ export default function ProfileScreen() {
               
               <TouchableOpacity style={styles.actionButton}>
                 <View style={styles.actionIconContainer}>
-                  <MaterialIcons name="notifications" size={22} color="#2196F3" />
+                  <MaterialIcons name="notifications" size={22} color={Colors.secondary} />
                 </View>
                 <View style={styles.actionContent}>
                   <Text style={styles.actionText}>Notifications</Text>
@@ -182,7 +183,7 @@ export default function ProfileScreen() {
               
               <TouchableOpacity style={styles.actionButton}>
                 <View style={styles.actionIconContainer}>
-                  <MaterialIcons name="help" size={22} color="#FF9800" />
+                  <MaterialIcons name="help" size={22} color={Colors.warning} />
                 </View>
                 <View style={styles.actionContent}>
                   <Text style={styles.actionText}>Help & Support</Text>
@@ -218,7 +219,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.backgroundSecondary,
   },
   scrollView: {
     flex: 1,
@@ -227,11 +228,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   profileSection: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 16,
     marginBottom: 20,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
   },
   coverPhoto: {
     height: 120,
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.primary,
     position: 'relative',
   },
   coverGradient: {
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.primary,
   },
   profileContent: {
     padding: 20,
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     borderWidth: 4,
-    borderColor: '#ffffff',
+    borderColor: Colors.background,
   },
   editImageButton: {
     position: 'absolute',
@@ -273,11 +274,11 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: Colors.background,
   },
   profileInfo: {
     alignItems: 'center',
@@ -286,19 +287,19 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#141414',
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
   membershipType: {
     fontSize: 16,
-    color: '#4CAF50',
+    color: Colors.primary,
     fontWeight: '600',
     marginBottom: 8,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E8F5E8',
+    backgroundColor: Colors.primarySoft,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
@@ -307,25 +308,25 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.primary,
     marginRight: 6,
   },
   statusText: {
     fontSize: 12,
-    color: '#4CAF50',
+    color: Colors.primary,
     fontWeight: '600',
   },
   editProfileButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     gap: 6,
   },
   editButtonText: {
-    color: '#ffffff',
+    color: Colors.textInverse,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -336,11 +337,11 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -349,13 +350,13 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#141414',
+    color: Colors.textPrimary,
     marginTop: 8,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#757575',
+    color: Colors.textTertiary,
     textAlign: 'center',
   },
   infoSection: {
@@ -370,13 +371,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#141414',
+    color: Colors.textPrimary,
   },
   infoCard: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -391,7 +392,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#E8F5E8',
+    backgroundColor: Colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -401,26 +402,26 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 12,
-    color: '#757575',
+    color: Colors.textTertiary,
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 16,
-    color: '#141414',
+    color: Colors.textPrimary,
     fontWeight: '500',
   },
   divider: {
     height: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: Colors.borderLight,
     marginLeft: 52,
   },
   actionsSection: {
     marginBottom: 32,
   },
   actionGroup: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -430,10 +431,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: 'white',
+    backgroundColor: Colors.cardBackground,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -443,7 +444,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.backgroundSecondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -453,21 +454,21 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 16,
-    color: '#141414',
+    color: Colors.textPrimary,
     fontWeight: '500',
     marginBottom: 2,
   },
   actionSubtext: {
     fontSize: 12,
-    color: '#757575',
+    color: Colors.textTertiary,
   },
   logoutButton: {
     marginTop: 8,
-    borderColor: '#fee',
+    borderColor: Colors.errorSoft,
     borderWidth: 1,
   },
   logoutText: {
-    color: '#f44336',
+    color: Colors.error,
   },
   versionContainer: {
     alignItems: 'center',
@@ -475,6 +476,6 @@ const styles = StyleSheet.create({
   },
   versionText: {
     fontSize: 12,
-    color: '#757575',
+    color: Colors.textTertiary,
   },
 });
