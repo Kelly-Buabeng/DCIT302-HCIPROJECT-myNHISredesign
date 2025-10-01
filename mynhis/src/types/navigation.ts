@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Renew: undefined;
   LinkGhanaCard: undefined;
   Benefits: undefined;
+  RenewalConfirmation: undefined;
 };
 
 export type ScreenNames = keyof RootStackParamList;

@@ -11,6 +11,7 @@ import ClaimsScreen from "./src/screens/ClaimsScreen";
 import RenewScreen from "./src/screens/RenewScreen";
 import LinkGhanaCardScreen from "./src/screens/LinkGhanaCardScreen";
 import BenefitsScreen from "./src/screens/BenefitsScreen";
+import RenewalConfirmationScreen from "./src/screens/RenewalConfirmationScreen";
 import { RootStackParamList } from "./src/types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,6 +30,7 @@ export default function App() {
           <Stack.Screen name="Renew" component={RenewScreen} />
           <Stack.Screen name="LinkGhanaCard" component={LinkGhanaCardScreen} />
           <Stack.Screen name="Benefits" component={BenefitsScreen} />
+          <Stack.Screen name="RenewalConfirmation" component={RenewalConfirmationScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

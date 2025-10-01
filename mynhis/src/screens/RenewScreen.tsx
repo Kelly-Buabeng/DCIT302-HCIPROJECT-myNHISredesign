@@ -26,7 +26,8 @@ export default function RenewScreen() {
         { 
           text: "Proceed", 
           onPress: () => {
-            Alert.alert("Success", "Membership renewed successfully!");
+            // Navigate to renewal confirmation screen
+            navigation.navigate("RenewalConfirmation");
           }
         }
       ]
