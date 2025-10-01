@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
+import Colors from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -75,7 +76,7 @@ export default function BenefitsScreen() {
     return (
       <View style={styles.benefitItem}>
         <View style={styles.iconContainer}>
-          <IconComponent name={benefit.iconName as any} size={32} color="#007bff" />
+          <IconComponent name={benefit.iconName as any} size={32} color={Colors.primary} />
         </View>
         <View style={styles.benefitContent}>
           <Text style={styles.benefitTitle}>{benefit.title}</Text>
@@ -100,9 +101,27 @@ export default function BenefitsScreen() {
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
+          {/* Header Description */}
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.descriptionTitle}>Your NHIS Benefits</Text>
+            <Text style={styles.descriptionText}>
+              Comprehensive healthcare coverage designed to protect you and your family
+            </Text>
+          </View>
+
           {benefits.map((benefit) => (
             <BenefitItem key={benefit.id} benefit={benefit} />
           ))}
+
+          {/* Coverage Note */}
+          <View style={styles.noteContainer}>
+            <View style={styles.noteIcon}>
+              <MaterialIcons name="info" size={20} color={Colors.secondary} />
+            </View>
+            <Text style={styles.noteText}>
+              All benefits are subject to terms and conditions. Contact your healthcare provider for specific coverage details.
+            </Text>
+          </View>
         </View>
       </ScrollView>
 
@@ -114,12 +133,12 @@ export default function BenefitsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.backgroundSecondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 8,
@@ -133,10 +152,10 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#141414',
+    color: Colors.textPrimary,
   },
   headerTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -147,22 +166,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.backgroundSecondary,
+    paddingBottom: 20,
+  },
+  descriptionContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    backgroundColor: Colors.cardBackground,
+    marginHorizontal: 16,
+    marginBottom: 20,
+    borderRadius: 12,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  descriptionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.textPrimary,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
   },
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.cardBackground,
     paddingHorizontal: 16,
-    minHeight: 72,
-    paddingVertical: 8,
+    paddingVertical: 16,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: 8,
-    backgroundColor: '#f2f2f2',
+    borderRadius: 12,
+    backgroundColor: Colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -172,16 +225,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   benefitTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     lineHeight: 24,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   benefitDescription: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontWeight: 'normal',
     lineHeight: 20,
+  },
+  noteContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: Colors.secondarySoft,
+    marginHorizontal: 16,
+    marginTop: 8,
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  noteIcon: {
+    marginTop: 2,
+  },
+  noteText: {
+    flex: 1,
+    fontSize: 12,
+    color: Colors.textSecondary,
+    lineHeight: 18,
   },
 });

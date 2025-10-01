@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -36,12 +37,12 @@ export default function ClaimsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.backgroundSecondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 8,
@@ -55,10 +56,10 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#141414',
+    color: Colors.textPrimary,
   },
   headerTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -73,14 +74,14 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: '#141414',
+    color: Colors.textPrimary,
     fontWeight: '500',
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#757575',
+    color: Colors.textSecondary,
     textAlign: 'center',
   },
 });

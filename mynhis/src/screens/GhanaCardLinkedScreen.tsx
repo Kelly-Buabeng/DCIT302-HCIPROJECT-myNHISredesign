@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors } from '../constants/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import FooterNav from '../components/FooterNav';
 
@@ -27,12 +28,12 @@ const GhanaCardLinkedScreen = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
       
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#141414" />
+          <MaterialIcons name="arrow-back" size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Ghana Card Linked</Text>
         <View style={styles.headerSpacer} />
@@ -123,11 +124,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#141414',
+    color: Colors.textPrimary,
+    flex: 1,
     textAlign: 'center',
-    marginBottom: 12,
+    marginRight: 40,
   },
   description: {
     fontSize: 16,

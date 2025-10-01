@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -18,7 +19,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Home")}
       >
         <View style={[styles.iconContainer, styles.activeIcon]}>
-          <MaterialIcons name="home" size={24} color="#141414" />
+          <MaterialIcons name="home" size={24} color={Colors.primary} />
         </View>
         <Text style={[styles.navText, styles.activeNavText]}>Home</Text>
       </TouchableOpacity>
@@ -28,7 +29,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Benefits")}
       >
         <View style={styles.iconContainer}>
-          <MaterialIcons name="favorite" size={24} color="#757575" />
+          <MaterialIcons name="favorite" size={24} color={Colors.textSecondary} />
         </View>
         <Text style={styles.navText}>Benefits</Text>
       </TouchableOpacity>
@@ -38,7 +39,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Renew")}
       >
         <View style={styles.iconContainer}>
-          <MaterialIcons name="refresh" size={24} color="#757575" />
+          <MaterialIcons name="refresh" size={24} color={Colors.textSecondary} />
         </View>
         <Text style={styles.navText}>Renew</Text>
       </TouchableOpacity>
@@ -48,7 +49,7 @@ export default function FooterNav() {
         onPress={() => navigation.navigate("Profile")}
       >
         <View style={styles.iconContainer}>
-          <MaterialIcons name="person" size={24} color="#757575" />
+          <MaterialIcons name="person" size={24} color={Colors.textSecondary} />
         </View>
         <Text style={styles.navText}>Profile</Text>
       </TouchableOpacity>
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: '#f2f2f2',
-    backgroundColor: 'white',
+    borderTopColor: Colors.border,
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingBottom: 12,
     paddingTop: 8,
@@ -82,12 +83,12 @@ const styles = StyleSheet.create({
     // Add any active icon styling here
   },
   navText: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 12,
     fontWeight: '500',
     textAlign: 'center',
   },
   activeNavText: {
-    color: '#141414',
+    color: Colors.primary,
   },
 });

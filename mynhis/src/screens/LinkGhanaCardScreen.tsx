@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -75,7 +76,7 @@ export default function LinkGhanaCardScreen() {
           <TextInput
             style={styles.input}
             placeholder="Ghana Card Number (e.g., GHA-123456789-0)"
-            placeholderTextColor="#757575"
+            placeholderTextColor={Colors.textSecondary}
             value={ghanaCardNumber}
             onChangeText={setGhanaCardNumber}
             autoCapitalize="characters"
@@ -88,7 +89,7 @@ export default function LinkGhanaCardScreen() {
           <TextInput
             style={styles.input}
             placeholder="6-digit Verification Code"
-            placeholderTextColor="#757575"
+            placeholderTextColor={Colors.textSecondary}
             value={verificationCode}
             onChangeText={setVerificationCode}
             keyboardType="numeric"
@@ -113,12 +114,12 @@ export default function LinkGhanaCardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.backgroundSecondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 8,
@@ -132,10 +133,10 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#141414',
+    color: Colors.textPrimary,
   },
   headerTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   instructionsText: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
@@ -160,19 +161,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   input: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: Colors.inputBackground,
     borderRadius: 12,
     height: 56,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#141414',
+    color: Colors.textPrimary,
     borderWidth: 0,
   },
   buttonContainer: {
     paddingVertical: 12,
   },
   linkButton: {
-    backgroundColor: '#808080',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     height: 48,
     alignItems: 'center',

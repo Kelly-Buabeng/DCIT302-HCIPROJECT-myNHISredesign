@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import { MaterialIcons } from '@expo/vector-icons';
 import FooterNav from "../components/FooterNav";
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -29,7 +30,7 @@ export default function RenewalConfirmationScreen() {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <MaterialIcons name="arrow-back" size={24} color="#141414" />
+            <MaterialIcons name="arrow-back" size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Renewal Confirmation</Text>
           <View style={styles.headerSpacer} />
@@ -70,7 +71,7 @@ export default function RenewalConfirmationScreen() {
         {/* Action Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
-            style={styles.primaryButton}
+            style={styles.continueButton}
             onPress={handleViewMembershipDetails}
           >
             <Text style={styles.primaryButtonText}>View Membership Details</Text>
@@ -191,16 +192,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
   },
-  primaryButton: {
-    backgroundColor: '#808080',
+  continueButton: {
+    backgroundColor: Colors.primary,
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    minWidth: 84,
-    maxWidth: 480,
-    width: '100%',
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 16,
   },
   primaryButtonText: {
     color: 'white',

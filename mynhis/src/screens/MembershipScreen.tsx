@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import { MaterialIcons } from '@expo/vector-icons';
 import FooterNav from "../components/FooterNav";
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -77,7 +78,7 @@ export default function MembershipScreen() {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#141414" />
+          <MaterialIcons name="arrow-back" size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Manage Dependents</Text>
         <View style={styles.headerSpacer} />
@@ -103,7 +104,7 @@ export default function MembershipScreen() {
               style={styles.deleteButton}
               onPress={() => handleDeleteDependent(dependent.id, dependent.name)}
             >
-              <MaterialIcons name="delete" size={24} color="#141414" />
+              <MaterialIcons name="delete" size={24} color={Colors.error} />
             </TouchableOpacity>
           </View>
         ))}
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     paddingHorizontal: 16,
@@ -193,13 +194,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dependentName: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 2,
   },
   dependentRelationship: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontWeight: '400',
   },
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButton: {
-    backgroundColor: '#808080',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 10,

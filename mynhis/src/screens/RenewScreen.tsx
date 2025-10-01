@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
 import FooterNav from "../components/FooterNav";
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -147,12 +148,12 @@ export default function RenewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.backgroundSecondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 8,
@@ -166,10 +167,10 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#141414',
+    color: Colors.textPrimary,
   },
   headerTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   expiryNotice: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 16,
     fontWeight: 'normal',
     lineHeight: 24,
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   sectionTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     lineHeight: 24,
@@ -205,18 +206,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: Colors.border,
     paddingVertical: 20,
   },
   detailLabel: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontWeight: 'normal',
     lineHeight: 20,
     flex: 1,
   },
   detailValue: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 14,
     fontWeight: 'normal',
     lineHeight: 20,
@@ -231,11 +232,12 @@ const styles = StyleSheet.create({
   radioContainer: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: Colors.border,
     padding: 15,
+    backgroundColor: Colors.background,
   },
   radioContainerSelected: {
-    borderColor: '#141414',
+    borderColor: Colors.primary,
   },
   radioContent: {
     flexDirection: 'row',
@@ -247,13 +249,13 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   radioTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20,
   },
   radioDescription: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontWeight: 'normal',
     lineHeight: 20,
@@ -264,25 +266,25 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#e0e0e0',
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioCircleSelected: {
-    borderColor: '#141414',
+    borderColor: Colors.primary,
   },
   radioInner: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#141414',
+    backgroundColor: Colors.primary,
   },
   buttonContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   renewButton: {
-    backgroundColor: '#808080',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     height: 48,
     alignItems: 'center',

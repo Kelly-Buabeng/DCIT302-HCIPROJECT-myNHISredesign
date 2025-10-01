@@ -167,7 +167,7 @@ export default function ProfileScreen() {
                   <Text style={styles.actionText}>Security & Privacy</Text>
                   <Text style={styles.actionSubtext}>Password, PIN & biometrics</Text>
                 </View>
-                <MaterialIcons name="chevron-right" size={24} color="#757575" />
+                <MaterialIcons name="chevron-right" size={24} color={Colors.textSecondary} />
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.actionButton}>
@@ -178,7 +178,7 @@ export default function ProfileScreen() {
                   <Text style={styles.actionText}>Notifications</Text>
                   <Text style={styles.actionSubtext}>SMS, email & push notifications</Text>
                 </View>
-                <MaterialIcons name="chevron-right" size={24} color="#757575" />
+                <MaterialIcons name="chevron-right" size={24} color={Colors.textSecondary} />
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.actionButton}>
@@ -189,19 +189,19 @@ export default function ProfileScreen() {
                   <Text style={styles.actionText}>Help & Support</Text>
                   <Text style={styles.actionSubtext}>FAQ, contact us & feedback</Text>
                 </View>
-                <MaterialIcons name="chevron-right" size={24} color="#757575" />
+                <MaterialIcons name="chevron-right" size={24} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
             <TouchableOpacity style={[styles.actionButton, styles.logoutButton]} onPress={handleLogout}>
               <View style={styles.actionIconContainer}>
-                <MaterialIcons name="logout" size={22} color="#f44336" />
+                <MaterialIcons name="logout" size={22} color={Colors.error} />
               </View>
               <View style={styles.actionContent}>
                 <Text style={[styles.actionText, styles.logoutText]}>Logout</Text>
                 <Text style={styles.actionSubtext}>Sign out of your account</Text>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color="#f44336" />
+              <MaterialIcons name="chevron-right" size={24} color={Colors.error} />
             </TouchableOpacity>
           </View>
 

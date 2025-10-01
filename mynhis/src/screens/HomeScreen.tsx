@@ -157,7 +157,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Renew")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="event" size={24} color={Colors.secondary} />
+              <MaterialIcons name="event" size={24} color={Colors.primary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Renew Membership</Text>
@@ -170,7 +170,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Claims")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="search" size={24} color={Colors.secondary} />
+              <MaterialIcons name="search" size={24} color={Colors.primary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Track Claims</Text>
@@ -183,7 +183,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Membership")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="group" size={24} color={Colors.secondary} />
+              <MaterialIcons name="group" size={24} color={Colors.primary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Manage Dependents</Text>
@@ -196,7 +196,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("LinkGhanaCard")}
           >
             <View style={styles.actionIcon}>
-              <MaterialIcons name="badge" size={24} color={Colors.secondary} />
+              <MaterialIcons name="badge" size={24} color={Colors.primary} />
             </View>
             <View style={styles.actionContent}>
               <Text style={styles.actionTitle}>Link Ghana Card</Text>

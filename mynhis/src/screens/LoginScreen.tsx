@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
+import { Colors } from '../constants/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -62,7 +63,7 @@ export default function LoginScreen() {
             <TextInput
               style={styles.input}
               placeholder="Username or NHIS Number"
-              placeholderTextColor="#757575"
+              placeholderTextColor={Colors.textSecondary}
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
@@ -74,7 +75,7 @@ export default function LoginScreen() {
             <TextInput
               style={styles.input}
               placeholder="Password"
-              placeholderTextColor="#757575"
+              placeholderTextColor={Colors.textSecondary}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -108,7 +109,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.backgroundSecondary,
   },
   content: {
     flex: 1,
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.background,
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 8,
@@ -130,10 +131,10 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#141414',
+    color: Colors.textPrimary,
   },
   headerTitle: {
-    color: '#141414',
+    color: Colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -151,16 +152,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   input: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: Colors.inputBackground,
     borderRadius: 12,
     height: 56,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#141414',
+    color: Colors.textPrimary,
     borderWidth: 0,
   },
   forgotPassword: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     textDecorationLine: 'underline',
     paddingVertical: 8,
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   loginButton: {
-    backgroundColor: '#808080',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     height: 48,
     alignItems: 'center',
@@ -179,12 +180,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   loginButtonText: {
-    color: '#ffffff',
+    color: Colors.textInverse,
     fontSize: 16,
     fontWeight: 'bold',
   },
   signUpText: {
-    color: '#757575',
+    color: Colors.textSecondary,
     fontSize: 14,
     textAlign: 'center',
     textDecorationLine: 'underline',
