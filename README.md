@@ -29,9 +29,7 @@ myNHIS is a mobile app for Ghana’s National Health Insurance Scheme (NHIS) mem
 - **Benefits Overview:** Browse covered healthcare services, drugs, hospitalization, lab tests, and more.
 - **Accessible Design:** Built using HCI principles for simplicity, clarity, and ease of use.
 
-## Screenshots
 
-> *Add screenshots here, e.g. `/screenshots/home.png`, `/screenshots/profile.png`*
 
 ## Installation
 
