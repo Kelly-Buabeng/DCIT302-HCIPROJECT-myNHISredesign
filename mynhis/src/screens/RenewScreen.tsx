@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
-import { AppHeader, Button, Card, OptionCard, Screen, Section, StepIndicator, TextField } from "../components/ui";
+import { Button, ChoiceRow, FormRow, Group, NavBar, Screen, StepIndicator } from "../components/ui";
 import { membership, paymentMethods, plans, profile } from "../data/dummyData";
 import { colors, spacing, type } from "../theme";
 
@@ -24,7 +24,7 @@ export default function RenewScreen() {
 
   const handlePay = () => {
     if (methodId === "momo" && phone.replace(/\D/g, "").length < 10) {
-      setPhoneError("Enter the 10-digit Mobile Money number that will approve the payment");
+      setPhoneError("Enter the 10-digit Mobile Money number that will approve the payment.");
       return;
     }
     setLoading(true);
@@ -42,12 +42,12 @@ export default function RenewScreen() {
 
   return (
     <Screen
-      header={<AppHeader title="Renew membership" back />}
-      footerSurface
+      navBar={<NavBar title="Renew Membership" left="cancel" sheet />}
+      toolbar
       footer={
         <View style={styles.footer}>
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total to pay</Text>
+            <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.total}>{cedi(plan.price)}</Text>
           </View>
           <Button label={`Pay ${cedi(plan.price)}`} icon="lock-closed" onPress={handlePay} loading={loading} />
@@ -56,73 +56,63 @@ export default function RenewScreen() {
     >
       <StepIndicator steps={["Plan", "Payment", "Confirm"]} current={1} />
 
-      <Card>
-        <Text style={styles.cardLabel}>Current cover ends</Text>
-        <Text style={styles.cardValue}>
-          {membership.validUntil} · {membership.daysLeft} days left
-        </Text>
-        <Text style={styles.cardHint}>Renewing adds 12 months from that date, so you lose no days.</Text>
-      </Card>
+      <Group
+        header="Plan"
+        footer={`Your cover ends ${membership.validUntil}. Renewing adds 12 months from that date, so you lose no days.`}
+      >
+        {plans.map((p) => (
+          <ChoiceRow
+            key={p.id}
+            title={p.tag ? `${p.name} (current)` : p.name}
+            subtitle={p.description}
+            value={cedi(p.price)}
+            selected={planId === p.id}
+            onPress={() => setPlanId(p.id)}
+          />
+        ))}
+      </Group>
 
-      <Section title="1. Choose a plan">
-        <View style={styles.options} accessibilityRole="radiogroup">
-          {plans.map((p) => (
-            <OptionCard
-              key={p.id}
-              title={p.name}
-              description={p.description}
-              value={`${cedi(p.price)}/yr`}
-              tag={p.tag}
-              selected={planId === p.id}
-              onPress={() => setPlanId(p.id)}
-            />
-          ))}
-        </View>
-      </Section>
+      <Group header="Pay With">
+        {paymentMethods.map((m) => (
+          <ChoiceRow
+            key={m.id}
+            icon={m.icon}
+            iconColor={m.id === "momo" ? colors.orange : colors.blue}
+            title={m.name}
+            subtitle={m.description}
+            selected={methodId === m.id}
+            onPress={() => setMethodId(m.id)}
+          />
+        ))}
+      </Group>
 
-      <Section title="2. Pay with">
-        <View style={styles.options} accessibilityRole="radiogroup">
-          {paymentMethods.map((m) => (
-            <OptionCard
-              key={m.id}
-              title={m.name}
-              description={m.description}
-              icon={m.icon}
-              selected={methodId === m.id}
-              onPress={() => setMethodId(m.id)}
-            />
-          ))}
-        </View>
-        {methodId === "momo" && (
-          <TextField
+      {methodId === "momo" && (
+        <Group
+          header="Mobile Money Number"
+          footer="You'll get a prompt on this phone to approve with your MoMo PIN."
+          error={phoneError}
+        >
+          <FormRow
             label="Mobile Money number"
-            icon="call-outline"
+            hideLabel
             keyboardType="phone-pad"
+            textContentType="telephoneNumber"
             value={phone}
             onChangeText={(t) => {
               setPhone(t);
               setPhoneError(undefined);
             }}
-            helper="You'll get a prompt on this phone to approve with your MoMo PIN."
-            error={phoneError}
+            invalid={!!phoneError}
           />
-        )}
-      </Section>
+        </Group>
+      )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  options: { gap: spacing.md },
-  cardLabel: { color: colors.inkMuted, ...type.caption },
-  cardValue: { color: colors.ink, ...type.heading, marginTop: 2 },
-  cardHint: { color: colors.inkMuted, ...type.caption, marginTop: spacing.sm },
-  footer: {
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-  },
+  footer: { gap: spacing.md, paddingHorizontal: spacing.lg },
   totalRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" },
-  totalLabel: { color: colors.inkMuted, ...type.body },
-  total: { color: colors.ink, ...type.title },
+  totalLabel: { color: colors.secondaryLabel, ...type.body },
+  total: { color: colors.label, ...type.title2, fontVariant: ["tabular-nums"] },
 });

@@ -4,12 +4,13 @@ import { colors, spacing, type } from "../../theme";
 
 interface SectionProps {
   title: string;
-  /** Optional text link on the right, e.g. "See all". */
+  /** Tint text link on the right, e.g. "See All". */
   actionLabel?: string;
   onAction?: () => void;
   children: ReactNode;
 }
 
+/** A bold section title (Title 3), like the Health and App Store apps. */
 export default function Section({ title, actionLabel, onAction, children }: SectionProps) {
   return (
     <View style={styles.section}>
@@ -18,7 +19,7 @@ export default function Section({ title, actionLabel, onAction, children }: Sect
           {title}
         </Text>
         {actionLabel && onAction && (
-          <Pressable onPress={onAction} accessibilityRole="link" hitSlop={12}>
+          <Pressable onPress={onAction} accessibilityRole="button" hitSlop={12} style={({ pressed }) => pressed && { opacity: 0.4 }}>
             <Text style={styles.action}>{actionLabel}</Text>
           </Pressable>
         )}
@@ -29,8 +30,8 @@ export default function Section({ title, actionLabel, onAction, children }: Sect
 }
 
 const styles = StyleSheet.create({
-  section: { gap: spacing.md },
-  head: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  title: { color: colors.ink, ...type.heading },
-  action: { color: colors.primary, ...type.label, paddingVertical: spacing.xs },
+  section: { gap: spacing.sm + 2 },
+  head: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", paddingHorizontal: 2 },
+  title: { color: colors.label, ...type.title3, fontWeight: "700" },
+  action: { color: colors.tint, ...type.body },
 });

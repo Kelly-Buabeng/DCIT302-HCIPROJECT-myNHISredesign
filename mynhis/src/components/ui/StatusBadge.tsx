@@ -5,19 +5,19 @@ import { colors, radius, spacing, type } from "../../theme";
 export type Status = "success" | "warning" | "danger" | "info" | "neutral";
 
 const map: Record<Status, { fg: string; bg: string; icon: IconName }> = {
-  success: { fg: colors.success, bg: colors.successSoft, icon: "checkmark-circle" },
-  warning: { fg: colors.warning, bg: colors.warningSoft, icon: "time" },
-  danger: { fg: colors.danger, bg: colors.dangerSoft, icon: "alert-circle" },
-  info: { fg: colors.info, bg: colors.infoSoft, icon: "sync" },
-  neutral: { fg: colors.inkMuted, bg: colors.canvas, icon: "ellipse-outline" },
+  success: { fg: colors.green, bg: colors.greenSoft, icon: "checkmark-circle" },
+  warning: { fg: colors.orange, bg: colors.orangeSoft, icon: "time" },
+  danger: { fg: colors.red, bg: colors.redSoft, icon: "close-circle" },
+  info: { fg: colors.blue, bg: colors.blueSoft, icon: "ellipsis-horizontal-circle" },
+  neutral: { fg: colors.secondaryLabel, bg: colors.fill, icon: "ellipse-outline" },
 };
 
-/** A status is never colour alone: icon + word, always. */
+/** Status capsule: always an icon and a word, never colour alone. */
 export default function StatusBadge({ label, status }: { label: string; status: Status }) {
   const s = map[status];
   return (
     <View style={[styles.badge, { backgroundColor: s.bg }]} accessible accessibilityLabel={`Status: ${label}`}>
-      <Icon name={s.icon} size={14} color={s.fg} />
+      <Icon name={s.icon} size={13} color={s.fg} />
       <Text style={[styles.text, { color: s.fg }]}>{label}</Text>
     </View>
   );
@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
-    gap: spacing.xs,
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: spacing.xs,
+    gap: 3,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
     borderRadius: radius.pill,
   },
-  text: { ...type.caption, fontWeight: "600" },
+  text: { ...type.footnote, fontWeight: "600" },
 });

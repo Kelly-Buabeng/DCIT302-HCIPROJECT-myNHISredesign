@@ -1,45 +1,70 @@
 import { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Icon, { IconName } from "./Icon";
-import { colors, radius, spacing, type } from "../../theme";
+import { colors, hairline, radius, spacing, type } from "../../theme";
 
 interface ListRowProps {
   title: string;
   subtitle?: string;
+  /** Right-detail text in grey, like iOS Settings values. */
+  value?: string;
+  /** Settings-style glyph in a coloured rounded square. */
   icon?: IconName;
-  /** Tints the icon tile — use "danger" only for destructive rows like Log out. */
-  tone?: "default" | "danger";
-  /** Text or element on the right (e.g. a StatusBadge). */
+  iconColor?: string;
+  /** Custom element on the right (e.g. a StatusBadge or Switch). */
   trailing?: ReactNode;
+  /** Adds a chevron and makes the row tappable. */
   onPress?: () => void;
-  /** Draw a divider above this row (all rows but the first in a Card). */
-  divider?: boolean;
+  /** Red title, no chevron — for Log out, Remove. */
+  destructive?: boolean;
+  /** Injected by Group. */
+  first?: boolean;
+  /** Custom left element instead of an icon (e.g. an Avatar). */
+  leading?: ReactNode;
 }
 
-export default function ListRow({ title, subtitle, icon, tone = "default", trailing, onPress, divider }: ListRowProps) {
-  const fg = tone === "danger" ? colors.danger : colors.primary;
-  const bg = tone === "danger" ? colors.dangerSoft : colors.primarySoft;
-  const content = (
+export default function ListRow({
+  title,
+  subtitle,
+  value,
+  icon,
+  iconColor = colors.tint,
+  trailing,
+  onPress,
+  destructive,
+  first,
+  leading,
+}: ListRowProps) {
+  const body = (
     <>
-      {icon && (
-        <View style={[styles.tile, { backgroundColor: bg }]}>
-          <Icon name={icon} size={20} color={fg} />
+      {leading ? (
+        <View style={styles.leading}>{leading}</View>
+      ) : icon ? (
+        <View style={[styles.iconSquare, { backgroundColor: iconColor }]}>
+          <Icon name={icon} size={18} color="#FFFFFF" />
         </View>
-      )}
-      <View style={styles.text}>
-        <Text style={[styles.title, tone === "danger" && { color: colors.danger }]}>{title}</Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+      ) : null}
+      <View style={[styles.main, !first && styles.separator]}>
+        <View style={styles.text}>
+          <Text style={[styles.title, destructive && { color: colors.red }]}>{title}</Text>
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        </View>
+        {value ? (
+          <Text style={styles.value} numberOfLines={1}>
+            {value}
+          </Text>
+        ) : null}
+        {trailing}
+        {onPress && !destructive ? <Icon name="chevron-forward" size={18} color={colors.tertiaryLabel} /> : null}
       </View>
-      {typeof trailing === "string" ? <Text style={styles.value}>{trailing}</Text> : trailing}
-      {onPress && <Icon name="chevron-forward" size={20} color={colors.inkSubtle} />}
     </>
   );
 
-  const rowStyle = [styles.row, divider && styles.divider];
+  const rowStyle = [styles.row];
   if (!onPress) {
     return (
-      <View style={rowStyle} accessible accessibilityLabel={[title, subtitle, typeof trailing === "string" ? trailing : ""].filter(Boolean).join(", ")}>
-        {content}
+      <View style={rowStyle} accessible accessibilityLabel={[title, subtitle, value].filter(Boolean).join(", ")}>
+        {body}
       </View>
     );
   }
@@ -47,29 +72,39 @@ export default function ListRow({ title, subtitle, icon, tone = "default", trail
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={subtitle ? `${title}, ${subtitle}` : title}
+      accessibilityLabel={[title, subtitle, value].filter(Boolean).join(", ")}
       style={({ pressed }) => [...rowStyle, pressed && styles.pressed]}
     >
-      {content}
+      {body}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  row: {
-    minHeight: 60,
+  row: { flexDirection: "row", alignItems: "center", paddingLeft: spacing.lg, backgroundColor: colors.surface },
+  pressed: { backgroundColor: "#D1D1D6" },
+  leading: { marginRight: spacing.md, paddingVertical: spacing.sm },
+  iconSquare: {
+    width: 29,
+    height: 29,
+    borderRadius: radius.icon,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.md,
+  },
+  main: {
+    flex: 1,
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
+    gap: spacing.sm,
+    paddingVertical: 11,
+    paddingRight: spacing.lg,
   },
-  divider: { borderTopWidth: 1, borderTopColor: colors.border },
-  pressed: { backgroundColor: colors.primarySoft },
-  tile: { width: 40, height: 40, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
-  text: { flex: 1, gap: 2 },
-  title: { color: colors.ink, ...type.body, fontWeight: "600" },
-  subtitle: { color: colors.inkMuted, ...type.caption },
-  value: { color: colors.ink, ...type.body, textAlign: "right", flexShrink: 1 },
+  // iOS separators start where the text starts, not at the screen edge.
+  separator: { borderTopWidth: hairline, borderTopColor: colors.separator },
+  text: { flex: 1, gap: 1 },
+  title: { color: colors.label, ...type.body },
+  subtitle: { color: colors.secondaryLabel, ...type.subheadline },
+  value: { color: colors.secondaryLabel, ...type.body, flexShrink: 1, textAlign: "right" },
 });

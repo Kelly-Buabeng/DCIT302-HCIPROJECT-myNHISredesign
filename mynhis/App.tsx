@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const navTheme = {
   ...DefaultTheme,
-  colors: { ...DefaultTheme.colors, primary: colors.primary, background: colors.canvas, card: colors.surface, text: colors.ink, border: colors.border },
+  colors: { ...DefaultTheme.colors, primary: colors.tint, background: colors.background, card: colors.surface, text: colors.label, border: colors.separator },
 };
 
 export default function App() {
@@ -40,14 +40,14 @@ export default function App() {
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </Stack.Group>
 
-          {/* Task flows slide in from the right and have a back arrow */}
-          <Stack.Group screenOptions={{ animation: "slide_from_right" }}>
+          {/* Tasks open as iOS sheets (slide up, "Cancel" to dismiss) */}
+          <Stack.Group screenOptions={{ presentation: "modal" }}>
             <Stack.Screen name="Renew" component={RenewScreen} />
             <Stack.Screen name="LinkGhanaCard" component={LinkGhanaCardScreen} />
           </Stack.Group>
 
-          {/* Success screens: no swipe-back into a finished payment */}
-          <Stack.Group screenOptions={{ animation: "fade", gestureEnabled: false }}>
+          {/* Receipts: no swipe-down back into a finished payment; "Done" closes */}
+          <Stack.Group screenOptions={{ presentation: "modal", animation: "fade", gestureEnabled: false }}>
             <Stack.Screen name="RenewalConfirmation" component={RenewalConfirmationScreen} />
             <Stack.Screen name="GhanaCardLinked" component={GhanaCardLinkedScreen} />
           </Stack.Group>

@@ -1,85 +1,83 @@
 import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { AppHeader, Card, Chip, Icon, Screen, StatusBadge, TabBar } from "../components/ui";
+import { StyleSheet, Text, View } from "react-native";
+import { Group, Icon, Screen, SegmentedControl, StatusBadge, TabBar } from "../components/ui";
 import { claims, ClaimStatus, claimStatusTone } from "../data/dummyData";
-import { colors, radius, spacing, type } from "../theme";
+import { colors, hairline, spacing, type } from "../theme";
 
-const filters: ("All" | ClaimStatus)[] = ["All", "Pending", "Processing", "Approved"];
+type Filter = "All" | ClaimStatus;
+
+const segments: { value: Filter; label: string }[] = [
+  { value: "All", label: "All" },
+  { value: "Pending", label: "Pending" },
+  { value: "Processing", label: "Processing" },
+  { value: "Approved", label: "Approved" },
+];
+
+function ClaimRow({ claim, first }: { claim: (typeof claims)[number]; first?: boolean }) {
+  return (
+    <View
+      style={styles.row}
+      accessible
+      accessibilityLabel={`${claim.facility}, ${claim.service}, ${claim.amount}, ${claim.date}, status ${claim.status}`}
+    >
+      <View style={[styles.rowInner, !first && styles.separator]}>
+        <View style={styles.rowTop}>
+          <Text style={styles.facility} numberOfLines={1}>
+            {claim.facility}
+          </Text>
+          <Text style={styles.amount}>{claim.amount}</Text>
+        </View>
+        <Text style={styles.meta}>
+          {claim.service} · {claim.date}
+        </Text>
+        <View style={styles.rowBottom}>
+          <StatusBadge label={claim.status} status={claimStatusTone[claim.status]} />
+          <Text style={styles.ref}>{claim.id}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
 
 export default function ClaimsScreen() {
-  const [filter, setFilter] = useState<(typeof filters)[number]>("All");
+  const [filter, setFilter] = useState<Filter>("All");
   const shown = useMemo(() => (filter === "All" ? claims : claims.filter((c) => c.status === filter)), [filter]);
 
   return (
-    <Screen header={<AppHeader title="Claims" />} footer={<TabBar active="Claims" />} padBottom={false}>
-      <Text style={styles.intro}>
-        Claims are filed by the hospital or pharmacy when you use your NHIS card. Track their progress here.
-      </Text>
+    <Screen largeTitle="Claims" footer={<TabBar active="Claims" />} padBottom={false}>
+      <SegmentedControl segments={segments} selected={filter} onChange={setFilter} />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} accessibilityRole="tablist">
-        {filters.map((f) => (
-          <Chip
-            key={f}
-            label={f}
-            selected={filter === f}
-            count={f === "All" ? claims.length : claims.filter((c) => c.status === f).length}
-            onPress={() => setFilter(f)}
-          />
-        ))}
-      </ScrollView>
-
-      <View style={styles.list}>
-        {shown.length === 0 ? (
-          <Card>
-            <View style={styles.empty}>
-              <Icon name="document-outline" size={32} color={colors.inkSubtle} />
-              <Text style={styles.emptyTitle}>No {filter.toLowerCase()} claims</Text>
-              <Text style={styles.emptyText}>Try another filter.</Text>
-            </View>
-          </Card>
-        ) : (
-          shown.map((c) => (
-            <Card key={c.id}>
-              <View style={styles.top}>
-                <StatusBadge label={c.status} status={claimStatusTone[c.status]} />
-                <Text style={styles.amount}>{c.amount}</Text>
-              </View>
-              <Text style={styles.facility}>{c.facility}</Text>
-              <Text style={styles.service}>{c.service}</Text>
-              <View style={styles.meta}>
-                <View style={styles.metaItem}>
-                  <Icon name="calendar-outline" size={14} color={colors.inkMuted} />
-                  <Text style={styles.metaText}>{c.date}</Text>
-                </View>
-                <Text style={styles.metaText}>Ref {c.id}</Text>
-              </View>
-            </Card>
-          ))
-        )}
-      </View>
+      {shown.length === 0 ? (
+        <View style={styles.empty}>
+          <Icon name="document-text-outline" size={48} color={colors.tertiaryLabel} />
+          <Text style={styles.emptyTitle}>No {filter} Claims</Text>
+          <Text style={styles.emptyText}>Claims appear here when a facility bills NHIS for your care.</Text>
+        </View>
+      ) : (
+        <Group
+          header={`${shown.length} ${shown.length === 1 ? "claim" : "claims"}`}
+          footer="Hospitals and pharmacies file claims when you use your NHIS card. Approved claims are paid to the facility, not to you."
+        >
+          {shown.map((c) => (
+            <ClaimRow key={c.id} claim={c} />
+          ))}
+        </Group>
+      )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  intro: { color: colors.inkMuted, ...type.body },
-  chips: { gap: spacing.sm },
-  list: { gap: spacing.md },
-  top: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.md },
-  amount: { color: colors.ink, ...type.heading },
-  facility: { color: colors.ink, ...type.body, fontWeight: "600" },
-  service: { color: colors.inkMuted, ...type.caption },
-  meta: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: spacing.md,
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  metaItem: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
-  metaText: { color: colors.inkMuted, ...type.caption },
-  empty: { alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xl, borderRadius: radius.md },
-  emptyTitle: { color: colors.ink, ...type.label },
-  emptyText: { color: colors.inkMuted, ...type.caption },
+  row: { paddingLeft: spacing.lg, backgroundColor: colors.surface },
+  rowInner: { paddingVertical: spacing.md, paddingRight: spacing.lg, gap: 3 },
+  separator: { borderTopWidth: hairline, borderTopColor: colors.separator },
+  rowTop: { flexDirection: "row", justifyContent: "space-between", gap: spacing.md },
+  facility: { flex: 1, color: colors.label, ...type.headline },
+  amount: { color: colors.label, ...type.body, fontVariant: ["tabular-nums"] },
+  meta: { color: colors.secondaryLabel, ...type.subheadline },
+  rowBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 6 },
+  ref: { color: colors.secondaryLabel, ...type.footnote },
+  empty: { alignItems: "center", gap: spacing.sm, paddingVertical: 64, paddingHorizontal: spacing.xl },
+  emptyTitle: { color: colors.label, ...type.title3 },
+  emptyText: { color: colors.secondaryLabel, ...type.subheadline, textAlign: "center" },
 });

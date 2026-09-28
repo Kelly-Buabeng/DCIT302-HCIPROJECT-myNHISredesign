@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
-import { AppHeader, Banner, Button, Card, Icon, Screen, StepIndicator, TextField } from "../components/ui";
+import { Button, FormRow, Group, Icon, NavBar, Screen, StepIndicator } from "../components/ui";
 import { profile } from "../data/dummyData";
 import { colors, spacing, type } from "../theme";
 
@@ -28,7 +28,7 @@ export default function LinkGhanaCardScreen() {
 
   const sendCode = () => {
     if (!CARD_PATTERN.test(card)) {
-      setError("Enter all 10 digits as shown on your card, e.g. GHA-123456789-0");
+      setError("Enter all 10 digits as shown on your card, e.g. GHA-123456789-0.");
       return;
     }
     setLoading(true);
@@ -52,43 +52,49 @@ export default function LinkGhanaCardScreen() {
 
   return (
     <Screen
-      header={<AppHeader title="Link Ghana Card" back />}
+      navBar={
+        <NavBar
+          title="Link Ghana Card"
+          sheet
+          left={
+            step === 0
+              ? "cancel"
+              : { label: "Back", onPress: () => { setStep(0); setCode(""); setError(undefined); } }
+          }
+        />
+      }
       footer={
         <View style={styles.footer}>
           {step === 0 ? (
-            <Button label="Send verification code" icon="chatbubble-ellipses-outline" onPress={sendCode} loading={loading} />
+            <Button label="Send Code" onPress={sendCode} loading={loading} />
           ) : (
-            <>
-              <Button label="Verify and link" icon="shield-checkmark-outline" onPress={verify} loading={loading} />
-              <Button variant="ghost" label="Use a different card number" onPress={() => { setStep(0); setCode(""); setError(undefined); }} />
-            </>
+            <Button label="Verify & Link" onPress={verify} loading={loading} />
           )}
         </View>
       }
     >
-      <StepIndicator steps={["Card number", "Verify", "Done"]} current={step} />
+      <StepIndicator steps={["Card Number", "Verify", "Done"]} current={step} />
+
+      <View style={styles.hero}>
+        <View style={styles.heroIcon}>
+          <Icon name={step === 0 ? "id-card" : "chatbubble-ellipses"} size={36} color="#FFFFFF" />
+        </View>
+        <Text style={styles.title} accessibilityRole="header">
+          {step === 0 ? "Enter Your Ghana Card Number" : "Enter the Code"}
+        </Text>
+        <Text style={styles.body}>
+          {step === 0
+            ? "It's under your photo on the front of the card."
+            : `We sent a 6-digit code by SMS to ${profile.phone.replace(/\d(?=\d{3})/g, "•")}.`}
+        </Text>
+      </View>
 
       {step === 0 ? (
-        <>
-          <View style={styles.intro}>
-            <Text style={styles.title} accessibilityRole="header">
-              Enter your Ghana Card number
-            </Text>
-            <Text style={styles.body}>
-              Linking lets hospitals confirm who you are with one card, and keeps your NHIS record up to date.
-            </Text>
-          </View>
-          <Card style={styles.sample}>
-            <Icon name="id-card-outline" size={28} color={colors.primary} />
-            <Text style={styles.sampleText}>
-              Find the number under your photo on the front of the card:{"\n"}
-              <Text style={styles.mono}>GHA-123456789-0</Text>
-            </Text>
-          </Card>
-          <TextField
+        <Group header="Ghana Card Number" footer="Format: GHA-123456789-0" error={error}>
+          <FormRow
             label="Ghana Card number"
+            hideLabel
             placeholder="GHA-000000000-0"
-            icon="id-card-outline"
             value={card}
             onChangeText={(t) => {
               setCard(formatCard(t));
@@ -97,24 +103,15 @@ export default function LinkGhanaCardScreen() {
             autoCapitalize="characters"
             autoCorrect={false}
             maxLength={15}
-            error={error}
+            invalid={!!error}
           />
-        </>
+        </Group>
       ) : (
-        <>
-          <View style={styles.intro}>
-            <Text style={styles.title} accessibilityRole="header">
-              Enter the 6-digit code
-            </Text>
-            <Text style={styles.body}>
-              We sent it by SMS to {profile.phone.replace(/\d(?=\d{3})/g, "•")}, the number registered with NIA.
-            </Text>
-          </View>
-          <Banner tone="info" title={`Card ${card}`} message="The code expires in 10 minutes." />
-          <TextField
+        <Group header={`Code for ${card}`} footer="The code expires in 10 minutes." error={error}>
+          <FormRow
             label="Verification code"
-            placeholder="000000"
-            icon="keypad-outline"
+            hideLabel
+            placeholder="6-digit code"
             keyboardType="number-pad"
             textContentType="oneTimeCode"
             maxLength={6}
@@ -123,20 +120,26 @@ export default function LinkGhanaCardScreen() {
               setCode(t.replace(/\D/g, ""));
               setError(undefined);
             }}
-            error={error}
+            invalid={!!error}
           />
-        </>
+        </Group>
       )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  intro: { gap: spacing.sm },
-  title: { color: colors.ink, ...type.title },
-  body: { color: colors.inkMuted, ...type.body },
-  sample: { flexDirection: "row", gap: spacing.md, alignItems: "center" },
-  sampleText: { color: colors.inkMuted, ...type.caption, flex: 1 },
-  mono: { color: colors.ink, fontWeight: "700", letterSpacing: 1 },
-  footer: { gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
+  hero: { alignItems: "center", gap: spacing.sm },
+  heroIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 14,
+    backgroundColor: colors.orange,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.xs,
+  },
+  title: { color: colors.label, ...type.title2, textAlign: "center" },
+  body: { color: colors.secondaryLabel, ...type.body, textAlign: "center" },
+  footer: { paddingHorizontal: spacing.lg },
 });

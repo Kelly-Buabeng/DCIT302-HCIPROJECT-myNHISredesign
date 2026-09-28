@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Switch, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
-import { AppHeader, Button, Card, ListRow, MembershipCard, Screen, Section, StatusBadge, TabBar } from "../components/ui";
+import { Button, Group, ListRow, MembershipCard, Screen, StatusBadge, TabBar } from "../components/ui";
 import { dependents as initialDependents, membership, profile } from "../data/dummyData";
 import { colors, spacing, type } from "../theme";
 
@@ -11,18 +11,18 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function MembershipScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [masked, setMasked] = useState(true);
+  const [showNumber, setShowNumber] = useState(false);
   const [dependents, setDependents] = useState(initialDependents);
 
   const removeDependent = (id: number, name: string) => {
-    Alert.alert("Remove dependent?", `${name} will lose NHIS cover under your membership.`, [
-      { text: "Keep", style: "cancel" },
+    Alert.alert(`Remove ${name}?`, `${name} will lose NHIS cover under your membership.`, [
+      { text: "Cancel", style: "cancel" },
       { text: "Remove", style: "destructive", onPress: () => setDependents((d) => d.filter((x) => x.id !== id)) },
     ]);
   };
 
   return (
-    <Screen header={<AppHeader title="My Card" />} footer={<TabBar active="Membership" />} padBottom={false}>
+    <Screen largeTitle="My Card" footer={<TabBar active="Membership" />} padBottom={false}>
       <View style={styles.cardBlock}>
         <MembershipCard
           name={profile.name}
@@ -30,76 +30,67 @@ export default function MembershipScreen() {
           plan={membership.plan}
           validUntil={membership.validUntil}
           active={membership.status === "active"}
-          masked={masked}
-        />
-        <Button
-          variant="ghost"
-          icon={masked ? "eye-outline" : "eye-off-outline"}
-          label={masked ? "Show full number" : "Hide number"}
-          onPress={() => setMasked((m) => !m)}
+          masked={!showNumber}
         />
         <Text style={styles.note}>Show this card at any NHIS-accredited facility.</Text>
       </View>
 
-      <Section title="Membership details">
-        <Card padding="none">
-          <ListRow icon="shield-checkmark-outline" title="Status" trailing={<StatusBadge label="Active" status="success" />} />
-          <ListRow icon="layers-outline" title="Plan" trailing={membership.plan} divider />
-          <ListRow icon="person-outline" title="Category" trailing={membership.category} divider />
-          <ListRow icon="calendar-outline" title="Valid until" trailing={membership.validUntil} divider />
-          <ListRow icon="location-outline" title="Scheme" subtitle={membership.scheme} divider />
-        </Card>
-        <Button label="Renew membership" icon="refresh" onPress={() => navigation.navigate("Renew")} />
-      </Section>
-
-      <Section title="Ghana Card">
-        <Card padding="none">
-          <ListRow
-            icon="id-card-outline"
-            title={profile.ghanaCard ? "Ghana Card linked" : "Not linked yet"}
-            subtitle={profile.ghanaCard ?? "Link it to verify your identity faster"}
-            trailing={profile.ghanaCard ? <StatusBadge label="Linked" status="success" /> : <StatusBadge label="To do" status="warning" />}
-            onPress={() => navigation.navigate("LinkGhanaCard")}
-          />
-        </Card>
-      </Section>
-
-      <Section title={`Dependents (${dependents.length})`}>
-        {dependents.length === 0 ? (
-          <Card>
-            <Text style={styles.empty}>No dependents on your membership.</Text>
-          </Card>
-        ) : (
-          <Card padding="none">
-            {dependents.map((d, i) => (
-              <ListRow
-                key={d.id}
-                icon={d.relationship === "Spouse" ? "heart-outline" : "happy-outline"}
-                title={d.name}
-                subtitle={`${d.relationship} · ${d.nhisNumber}`}
-                trailing={
-                  <Button variant="ghost" block={false} label="Remove" onPress={() => removeDependent(d.id, d.name)} />
-                }
-                divider={i > 0}
-              />
-            ))}
-          </Card>
-        )}
-        <Button
-          variant="secondary"
-          icon="person-add-outline"
-          label="Add a dependent"
-          onPress={() =>
-            Alert.alert("Add a dependent", "Bring the dependent's Ghana Card or birth certificate to your district office to add them.")
+      <Group>
+        <ListRow
+          icon="eye"
+          iconColor={colors.gray}
+          title="Show Full Number"
+          trailing={
+            <Switch
+              value={showNumber}
+              onValueChange={setShowNumber}
+              trackColor={{ true: colors.tint, false: colors.fill }}
+              accessibilityLabel="Show full NHIS number"
+            />
           }
         />
-      </Section>
+      </Group>
+
+      <Group header="Membership">
+        <ListRow icon="shield-checkmark" iconColor={colors.green} title="Status" trailing={<StatusBadge label="Active" status="success" />} />
+        <ListRow icon="layers" iconColor={colors.blue} title="Plan" value={membership.plan} />
+        <ListRow icon="person" iconColor={colors.indigo} title="Category" value="Principal" />
+        <ListRow icon="calendar" iconColor={colors.red} title="Valid Until" value={membership.validUntil} />
+        <ListRow icon="location" iconColor={colors.teal} title="Scheme" value="Accra Metro" />
+        <ListRow icon="refresh" iconColor={colors.tint} title="Renew Membership" onPress={() => navigation.navigate("Renew")} />
+      </Group>
+
+      <Group header="Identity" footer="Linking your Ghana Card lets facilities confirm who you are with one card.">
+        <ListRow
+          icon="id-card"
+          iconColor={colors.orange}
+          title="Ghana Card"
+          value={profile.ghanaCard ?? "Not Linked"}
+          onPress={() => navigation.navigate("LinkGhanaCard")}
+        />
+      </Group>
+
+      <Group
+        header={`Dependents (${dependents.length})`}
+        footer="To add a dependent, bring their Ghana Card or birth certificate to your district office."
+      >
+        {dependents.map((d) => (
+          <ListRow
+            key={d.id}
+            icon={d.relationship === "Spouse" ? "heart" : "happy"}
+            iconColor={d.relationship === "Spouse" ? colors.pink : colors.purple}
+            title={d.name}
+            subtitle={`${d.relationship} · ${d.nhisNumber}`}
+            trailing={<Button variant="destructive" size="small" label="Remove" onPress={() => removeDependent(d.id, d.name)} />}
+          />
+        ))}
+        {dependents.length === 0 ? <ListRow title="No dependents" /> : null}
+      </Group>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  cardBlock: { gap: spacing.sm },
-  note: { color: colors.inkMuted, ...type.caption, textAlign: "center" },
-  empty: { color: colors.inkMuted, ...type.body },
+  cardBlock: { gap: spacing.md },
+  note: { color: colors.secondaryLabel, ...type.footnote, textAlign: "center" },
 });

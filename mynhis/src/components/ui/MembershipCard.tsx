@@ -12,114 +12,86 @@ interface MembershipCardProps {
   masked?: boolean;
 }
 
-/** The digital NHIS card. Shown on Home (compact) and My Card. */
+/** The NHIS card as a Wallet-style pass: header strip, primary field, secondary fields. */
 export default function MembershipCard({ name, nhisNumber, plan, validUntil, active, masked }: MembershipCardProps) {
   const shown = masked ? `•••• •••• ${nhisNumber.slice(-4)}` : nhisNumber;
   return (
     <View
-      style={styles.card}
+      style={styles.pass}
       accessible
       accessibilityLabel={`NHIS membership card for ${name}. ${plan}. Number ${masked ? "hidden" : nhisNumber}. Valid until ${validUntil}. ${active ? "Active" : "Expired"}.`}
     >
-      {/* Decorative shapes: a gold arc and a lighter disc, echoing the design-system cover */}
-      <View style={styles.discLarge} />
-      <View style={styles.arc} />
-
-      <View style={styles.top}>
-        <View style={styles.brand}>
-          <View style={styles.logo}>
-            <Icon name="medical" size={16} color={colors.primary} />
-          </View>
-          <View>
-            <Text style={styles.brandName}>myNHIS</Text>
-            <Text style={styles.brandSub}>National Health Insurance</Text>
-          </View>
+      <View style={styles.header}>
+        <View style={styles.logo}>
+          <Icon name="medical" size={15} color={colors.pass} />
         </View>
-        <View style={styles.status}>
-          <Icon name={active ? "checkmark-circle" : "close-circle"} size={14} color={colors.onGold} />
-          <Text style={styles.statusText}>{active ? "ACTIVE" : "EXPIRED"}</Text>
+        <Text style={styles.brand}>NHIS Ghana</Text>
+        <View style={styles.headerField}>
+          <Text style={styles.fieldLabel}>STATUS</Text>
+          <View style={styles.statusRow}>
+            <View style={[styles.dot, { backgroundColor: active ? colors.passAccent : colors.red }]} />
+            <Text style={styles.headerValue}>{active ? "Active" : "Expired"}</Text>
+          </View>
         </View>
       </View>
 
-      <View style={styles.middle}>
-        <Text style={styles.overline}>NHIS NUMBER</Text>
-        <Text style={styles.number}>{shown}</Text>
+      <View style={styles.primary}>
+        <Text style={styles.fieldLabel}>MEMBER</Text>
+        <Text style={styles.primaryValue} numberOfLines={1}>
+          {name}
+        </Text>
       </View>
 
-      <View style={styles.bottom}>
+      <View style={styles.secondary}>
         <View style={styles.flex}>
-          <Text style={styles.overline}>MEMBER</Text>
-          <Text style={styles.value} numberOfLines={1}>
-            {name}
-          </Text>
+          <Text style={styles.fieldLabel}>NHIS NUMBER</Text>
+          <Text style={styles.value}>{shown}</Text>
         </View>
         <View>
-          <Text style={styles.overline}>VALID UNTIL</Text>
-          <Text style={styles.value}>{validUntil}</Text>
+          <Text style={[styles.fieldLabel, styles.right]}>VALID UNTIL</Text>
+          <Text style={[styles.value, styles.right]}>{validUntil}</Text>
         </View>
       </View>
-      <Text style={styles.plan}>{plan}</Text>
+
+      <View style={styles.footer}>
+        <Text style={styles.plan}>{plan}</Text>
+        <View style={styles.stripe} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.xl,
-    padding: spacing.xl,
+  pass: {
+    backgroundColor: colors.pass,
+    borderRadius: radius.card,
+    padding: spacing.lg,
     gap: spacing.lg,
     overflow: "hidden",
-    minHeight: 200,
-    ...shadow.raised,
+    ...shadow.pass,
   },
-  discLarge: {
-    position: "absolute",
-    right: -60,
-    top: -60,
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: colors.primaryPressed,
-  },
-  arc: {
-    position: "absolute",
-    right: -70,
-    bottom: -110,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    borderWidth: 14,
-    borderColor: colors.gold,
-    opacity: 0.9,
-  },
-  top: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  brand: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  header: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   logo: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surface,
+    width: 28,
+    height: 28,
+    borderRadius: 7,
+    backgroundColor: colors.onPass,
     alignItems: "center",
     justifyContent: "center",
   },
-  brandName: { color: colors.onPrimary, ...type.label, fontSize: 15 },
-  brandSub: { color: colors.onPrimaryMuted, ...type.caption, fontSize: 11, lineHeight: 14 },
-  status: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: colors.gold,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-  },
-  statusText: { color: colors.onGold, ...type.overline, fontSize: 11 },
-  middle: { gap: 2 },
-  overline: { color: colors.onPrimaryMuted, ...type.overline, fontSize: 11 },
-  number: { color: colors.onPrimary, fontSize: 22, lineHeight: 28, fontWeight: "700", letterSpacing: 1.5 },
-  bottom: { flexDirection: "row", gap: spacing.lg },
+  brand: { flex: 1, color: colors.onPass, ...type.headline },
+  headerField: { alignItems: "flex-end" },
+  statusRow: { flexDirection: "row", alignItems: "center", gap: 5 },
+  dot: { width: 8, height: 8, borderRadius: 4 },
+  headerValue: { color: colors.onPass, ...type.subheadline, fontWeight: "600" },
+  fieldLabel: { color: colors.onPassMuted, ...type.caption2, fontWeight: "600", letterSpacing: 0.6 },
+  primary: { gap: 2, marginTop: spacing.sm },
+  primaryValue: { color: colors.onPass, ...type.title1, fontWeight: "400" },
+  secondary: { flexDirection: "row", gap: spacing.lg },
   flex: { flex: 1 },
-  value: { color: colors.onPrimary, ...type.label, fontSize: 15 },
-  plan: { color: colors.onPrimaryMuted, ...type.caption },
+  value: { color: colors.onPass, ...type.body, fontVariant: ["tabular-nums"] },
+  right: { textAlign: "right" },
+  footer: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  plan: { color: colors.onPassMuted, ...type.footnote },
+  stripe: { flex: 1, height: 3, borderRadius: 2, backgroundColor: colors.passAccent },
 });

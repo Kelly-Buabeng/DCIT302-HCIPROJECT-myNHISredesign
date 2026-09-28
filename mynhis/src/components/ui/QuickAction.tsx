@@ -1,17 +1,19 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Icon, { IconName } from "./Icon";
-import { colors, radius, shadow, spacing, type } from "../../theme";
+import { colors, radius, spacing, type } from "../../theme";
 
 interface QuickActionProps {
   label: string;
   icon: IconName;
+  /** Colour of the round glyph background (a system colour). */
+  color?: string;
   onPress: () => void;
-  /** Small dot + text to draw attention, e.g. "Due soon". */
+  /** Short note that draws attention, e.g. "Due". */
   badge?: string;
 }
 
-/** Square shortcut tile for the Home grid (2 per row). */
-export default function QuickAction({ label, icon, onPress, badge }: QuickActionProps) {
+/** Shortcut tile for the Home grid (2 per row), in the style of Shortcuts/Health tiles. */
+export default function QuickAction({ label, icon, color = colors.tint, onPress, badge }: QuickActionProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -19,15 +21,13 @@ export default function QuickAction({ label, icon, onPress, badge }: QuickAction
       accessibilityLabel={badge ? `${label}, ${badge}` : label}
       style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
     >
-      <View style={styles.iconWrap}>
-        <Icon name={icon} size={24} color={colors.primary} />
+      <View style={styles.top}>
+        <View style={[styles.glyph, { backgroundColor: color }]}>
+          <Icon name={icon} size={20} color="#FFFFFF" />
+        </View>
+        {badge ? <Text style={styles.badge}>{badge}</Text> : null}
       </View>
       <Text style={styles.label}>{label}</Text>
-      {badge ? (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{badge}</Text>
-        </View>
-      ) : null}
     </Pressable>
   );
 }
@@ -36,33 +36,16 @@ const styles = StyleSheet.create({
   tile: {
     flexBasis: "47%",
     flexGrow: 1,
-    minHeight: 112,
-    padding: spacing.lg,
+    minHeight: 96,
+    padding: spacing.md + 2,
+    justifyContent: "space-between",
     gap: spacing.md,
-    borderRadius: radius.lg,
+    borderRadius: radius.button,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadow.card,
   },
-  pressed: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
-  iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.primarySoft,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  label: { color: colors.ink, ...type.label, fontSize: 15 },
-  badge: {
-    position: "absolute",
-    top: spacing.md,
-    right: spacing.md,
-    backgroundColor: colors.warningSoft,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-  },
-  badgeText: { color: colors.warning, ...type.caption, fontWeight: "600", fontSize: 12 },
+  pressed: { backgroundColor: "#E5E5EA" },
+  top: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  glyph: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
+  badge: { color: colors.orange, ...type.footnote, fontWeight: "600" },
+  label: { color: colors.label, ...type.headline },
 });

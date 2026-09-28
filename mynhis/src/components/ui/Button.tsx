@@ -2,39 +2,41 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-nati
 import Icon, { IconName } from "./Icon";
 import { colors, radius, spacing, touchTarget, type } from "../../theme";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = "filled" | "tinted" | "plain" | "destructive";
 
 interface ButtonProps {
   label: string;
   onPress: () => void;
+  /** iOS button styles: filled (main action), tinted, plain (text only), destructive. */
   variant?: Variant;
   icon?: IconName;
   disabled?: boolean;
   loading?: boolean;
-  /** Stretch to the container width (default true). */
-  block?: boolean;
+  /** "large" = 50pt full-width; "small" = compact capsule. */
+  size?: "large" | "small";
   accessibilityHint?: string;
 }
 
-const palette: Record<Variant, { bg: string; bgPressed: string; fg: string; border: string }> = {
-  primary: { bg: colors.primary, bgPressed: colors.primaryPressed, fg: colors.onPrimary, border: colors.primary },
-  secondary: { bg: colors.surface, bgPressed: colors.primarySoft, fg: colors.primary, border: colors.primary },
-  ghost: { bg: "transparent", bgPressed: colors.primarySoft, fg: colors.primary, border: "transparent" },
-  danger: { bg: colors.surface, bgPressed: colors.dangerSoft, fg: colors.danger, border: colors.danger },
+const palette: Record<Variant, { bg: string; fg: string }> = {
+  filled: { bg: colors.tint, fg: colors.onTint },
+  tinted: { bg: colors.tintSoft, fg: colors.tint },
+  plain: { bg: "transparent", fg: colors.tint },
+  destructive: { bg: colors.redSoft, fg: colors.red },
 };
 
 export default function Button({
   label,
   onPress,
-  variant = "primary",
+  variant = "filled",
   icon,
   disabled = false,
   loading = false,
-  block = true,
+  size = "large",
   accessibilityHint,
 }: ButtonProps) {
   const p = palette[variant];
   const inactive = disabled || loading;
+  const small = size === "small";
   return (
     <Pressable
       onPress={onPress}
@@ -44,18 +46,24 @@ export default function Button({
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: inactive, busy: loading }}
       style={({ pressed }) => [
-        styles.base,
-        block && styles.block,
-        { backgroundColor: pressed ? p.bgPressed : p.bg, borderColor: p.border },
-        disabled && styles.disabled,
+        small ? styles.small : styles.large,
+        { backgroundColor: disabled ? colors.fill : p.bg },
+        pressed && styles.pressed,
       ]}
     >
       {loading ? (
         <ActivityIndicator color={p.fg} />
       ) : (
         <View style={styles.row}>
-          {icon && <Icon name={icon} size={20} color={disabled ? colors.inkMuted : p.fg} />}
-          <Text style={[styles.label, { color: disabled ? colors.inkMuted : p.fg }]}>{label}</Text>
+          {icon && <Icon name={icon} size={small ? 16 : 20} color={disabled ? colors.secondaryLabel : p.fg} />}
+          <Text
+            style={[
+              small ? styles.smallText : styles.largeText,
+              { color: disabled ? colors.secondaryLabel : p.fg },
+            ]}
+          >
+            {label}
+          </Text>
         </View>
       )}
     </Pressable>
@@ -63,17 +71,24 @@ export default function Button({
 }
 
 const styles = StyleSheet.create({
-  base: {
-    minHeight: 52,
-    minWidth: touchTarget,
+  large: {
+    minHeight: 50,
+    alignSelf: "stretch",
+    borderRadius: radius.button,
     paddingHorizontal: spacing.xl,
-    borderRadius: radius.md,
-    borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
   },
-  block: { alignSelf: "stretch" },
+  small: {
+    minHeight: 30,
+    minWidth: touchTarget,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
-  label: { ...type.label, fontSize: 16 },
-  disabled: { backgroundColor: colors.disabled, borderColor: colors.disabled },
+  largeText: { ...type.headline },
+  smallText: { ...type.subheadline, fontWeight: "600" },
+  pressed: { opacity: 0.6 },
 });

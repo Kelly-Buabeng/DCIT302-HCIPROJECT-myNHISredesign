@@ -1,85 +1,79 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
-import { Avatar, Banner, Card, ListRow, MembershipCard, QuickAction, Screen, Section, StatusBadge, TabBar } from "../components/ui";
+import { Avatar, Banner, Group, ListRow, MembershipCard, QuickAction, Screen, Section, StatusBadge, TabBar } from "../components/ui";
 import { claims, claimStatusTone, membership, profile } from "../data/dummyData";
-import { colors, spacing, type } from "../theme";
+import { colors, spacing } from "../theme";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function greeting() {
-  const h = new Date().getHours();
-  return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
-}
+const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
   const expiringSoon = membership.daysLeft <= 30;
-  const recent = claims.slice(0, 2);
 
   return (
-    <Screen footer={<TabBar active="Home" />} padBottom={false}>
-      <View style={styles.header}>
-        <View style={styles.flex}>
-          <Text style={styles.greeting}>{greeting()},</Text>
-          <Text style={styles.name} accessibilityRole="header">
-            {profile.firstName}
-          </Text>
-        </View>
-        <Avatar name={profile.name} />
-      </View>
-
-      <MembershipCard
-        name={profile.name}
-        nhisNumber={profile.nhisNumber}
-        plan={membership.plan}
-        validUntil={membership.validUntil}
-        active={membership.status === "active"}
-        masked
-      />
+    <Screen
+      overline={today}
+      largeTitle={`Hello, ${profile.firstName}`}
+      titleAccessory={
+        <Pressable onPress={() => navigation.navigate("Profile")} accessibilityRole="button" accessibilityLabel="Open profile" hitSlop={6}>
+          <Avatar name={profile.name} size={40} />
+        </Pressable>
+      }
+      footer={<TabBar active="Home" />}
+      padBottom={false}
+    >
+      <Pressable onPress={() => navigation.navigate("Membership")} accessibilityRole="button" accessibilityHint="Opens your full card">
+        <MembershipCard
+          name={profile.name}
+          nhisNumber={profile.nhisNumber}
+          plan={membership.plan}
+          validUntil={membership.validUntil}
+          active={membership.status === "active"}
+          masked
+        />
+      </Pressable>
 
       {expiringSoon && (
         <Banner
           tone="warning"
-          title={`Your cover ends in ${membership.daysLeft} days`}
-          message={`Renew before ${membership.validUntil} to avoid a break in cover.`}
-          actionLabel="Renew now"
+          title={`Cover ends in ${membership.daysLeft} days`}
+          message={`Renew before ${membership.validUntil} so your cover doesn't lapse.`}
+          actionLabel="Renew Now"
           onAction={() => navigation.navigate("Renew")}
         />
       )}
 
-      <Section title="What would you like to do?">
+      <Section title="Shortcuts">
         <View style={styles.grid}>
-          <QuickAction label="Renew membership" icon="refresh-circle-outline" onPress={() => navigation.navigate("Renew")} badge={expiringSoon ? "Due" : undefined} />
-          <QuickAction label="Track claims" icon="document-text-outline" onPress={() => navigation.navigate("Claims")} />
-          <QuickAction label="Link Ghana Card" icon="id-card-outline" onPress={() => navigation.navigate("LinkGhanaCard")} badge={profile.ghanaCard ? undefined : "To do"} />
-          <QuickAction label="Family & dependents" icon="people-outline" onPress={() => navigation.navigate("Membership")} />
+          <QuickAction label="Renew" icon="refresh" color={colors.tint} onPress={() => navigation.navigate("Renew")} badge={expiringSoon ? "Due" : undefined} />
+          <QuickAction label="Claims" icon="document-text" color={colors.blue} onPress={() => navigation.navigate("Claims")} />
+          <QuickAction label="Ghana Card" icon="id-card" color={colors.orange} onPress={() => navigation.navigate("LinkGhanaCard")} badge={profile.ghanaCard ? undefined : "To Do"} />
+          <QuickAction label="Family" icon="people" color={colors.purple} onPress={() => navigation.navigate("Membership")} />
         </View>
       </Section>
 
-      <Section title="Recent claims" actionLabel="See all" onAction={() => navigation.navigate("Claims")}>
-        <Card padding="none">
-          {recent.map((c, i) => (
+      <Section title="Recent Claims" actionLabel="See All" onAction={() => navigation.navigate("Claims")}>
+        <Group>
+          {claims.slice(0, 2).map((c) => (
             <ListRow
               key={c.id}
-              icon="business-outline"
+              icon="business"
+              iconColor={colors.teal}
               title={c.facility}
               subtitle={`${c.date} · ${c.amount}`}
               trailing={<StatusBadge label={c.status} status={claimStatusTone[c.status]} />}
-              divider={i > 0}
             />
           ))}
-        </Card>
+        </Group>
       </Section>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  header: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginTop: spacing.sm },
-  greeting: { color: colors.inkMuted, ...type.body },
-  name: { color: colors.ink, ...type.display },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
 });

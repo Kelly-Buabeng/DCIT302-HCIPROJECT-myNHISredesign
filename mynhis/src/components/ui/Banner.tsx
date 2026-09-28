@@ -4,11 +4,11 @@ import { colors, radius, spacing, type } from "../../theme";
 
 type Tone = "info" | "warning" | "success" | "danger";
 
-const tones: Record<Tone, { fg: string; bg: string; icon: IconName }> = {
-  info: { fg: colors.info, bg: colors.infoSoft, icon: "information-circle" },
-  warning: { fg: colors.warning, bg: colors.warningSoft, icon: "warning" },
-  success: { fg: colors.success, bg: colors.successSoft, icon: "checkmark-circle" },
-  danger: { fg: colors.danger, bg: colors.dangerSoft, icon: "alert-circle" },
+const tones: Record<Tone, { fg: string; icon: IconName }> = {
+  info: { fg: colors.blue, icon: "information-circle" },
+  warning: { fg: colors.orange, icon: "warning" },
+  success: { fg: colors.green, icon: "checkmark-circle" },
+  danger: { fg: colors.red, icon: "alert-circle" },
 };
 
 interface BannerProps {
@@ -19,18 +19,18 @@ interface BannerProps {
   onAction?: () => void;
 }
 
+/** A tip-style card (like iOS TipKit): white card, coloured glyph, optional text action. */
 export default function Banner({ tone = "info", title, message, actionLabel, onAction }: BannerProps) {
   const t = tones[tone];
   return (
-    <View style={[styles.banner, { backgroundColor: t.bg }]} accessibilityRole="alert">
-      <Icon name={t.icon} size={22} color={t.fg} />
+    <View style={styles.card} accessibilityRole="alert">
+      <Icon name={t.icon} size={28} color={t.fg} />
       <View style={styles.text}>
-        <Text style={[styles.title, { color: t.fg }]}>{title}</Text>
+        <Text style={styles.title}>{title}</Text>
         {message ? <Text style={styles.message}>{message}</Text> : null}
         {actionLabel && onAction ? (
-          <Pressable onPress={onAction} accessibilityRole="button" hitSlop={8} style={styles.action}>
-            <Text style={[styles.actionText, { color: t.fg }]}>{actionLabel}</Text>
-            <Icon name="arrow-forward" size={16} color={t.fg} />
+          <Pressable onPress={onAction} accessibilityRole="button" hitSlop={10} style={({ pressed }) => [styles.action, pressed && { opacity: 0.4 }]}>
+            <Text style={styles.actionText}>{actionLabel}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -39,10 +39,16 @@ export default function Banner({ tone = "info", title, message, actionLabel, onA
 }
 
 const styles = StyleSheet.create({
-  banner: { flexDirection: "row", gap: spacing.md, padding: spacing.lg, borderRadius: radius.lg },
-  text: { flex: 1, gap: spacing.xs },
-  title: { ...type.label, fontSize: 15 },
-  message: { color: colors.ink, ...type.caption },
-  action: { flexDirection: "row", alignItems: "center", gap: spacing.xs, marginTop: spacing.xs, minHeight: 32 },
-  actionText: { ...type.label },
+  card: {
+    flexDirection: "row",
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.control,
+    backgroundColor: colors.surface,
+  },
+  text: { flex: 1, gap: 2 },
+  title: { color: colors.label, ...type.headline },
+  message: { color: colors.secondaryLabel, ...type.subheadline },
+  action: { marginTop: spacing.sm, minHeight: 28, justifyContent: "center", alignSelf: "flex-start" },
+  actionText: { color: colors.tint, ...type.body },
 });
