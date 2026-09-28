@@ -1,189 +1,142 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
-import FooterNav from "../components/FooterNav";
-import { Colors } from '../constants/colors';
+import { AppHeader, Banner, Button, Card, Icon, Screen, StepIndicator, TextField } from "../components/ui";
+import { profile } from "../data/dummyData";
+import { colors, spacing, type } from "../theme";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+/** Formats typed characters as GHA-XXXXXXXXX-X. */
+function formatCard(raw: string) {
+  const digits = raw.toUpperCase().replace(/^GHA/, "").replace(/\D/g, "").slice(0, 10);
+  if (!digits) return raw.toUpperCase().startsWith("G") ? "GHA-" : "";
+  return `GHA-${digits.slice(0, 9)}${digits.length > 9 ? `-${digits.slice(9)}` : ""}`;
+}
+
+const CARD_PATTERN = /^GHA-\d{9}-\d$/;
+
 export default function LinkGhanaCardScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [ghanaCardNumber, setGhanaCardNumber] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const insets = useSafeAreaInsets();
+  const [step, setStep] = useState<0 | 1>(0);
+  const [card, setCard] = useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
-  const handleLinkCard = () => {
-    if (!ghanaCardNumber.trim() || !verificationCode.trim()) {
-      Alert.alert("Error", "Please fill in all fields");
+  const sendCode = () => {
+    if (!CARD_PATTERN.test(card)) {
+      setError("Enter all 10 digits as shown on your card, e.g. GHA-123456789-0");
       return;
     }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setStep(1);
+    }, 700);
+  };
 
-    // Simple validation for Ghana Card format (example: GHA-123456789-0)
-    const ghanaCardPattern = /^GHA-\d{9}-\d{1}$/i;
-    
-    if (!ghanaCardPattern.test(ghanaCardNumber)) {
-      Alert.alert(
-        "Invalid Format", 
-        "Please enter a valid Ghana Card number in the format: GHA-123456789-0"
-      );
+  const verify = () => {
+    if (!/^\d{6}$/.test(code)) {
+      setError("The code has 6 digits. Check the SMS and try again.");
       return;
     }
-
-    // Simple verification code validation (6 digits)
-    if (verificationCode.length !== 6 || !/^\d{6}$/.test(verificationCode)) {
-      Alert.alert("Error", "Please enter a valid 6-digit verification code");
-      return;
-    }
-
-    Alert.alert(
-      "Success",
-      "Ghana Card linked successfully to your NHIS account!",
-      [
-        {
-          text: "OK",
-          onPress: () => navigation.navigate("GhanaCardLinked")
-        }
-      ]
-    );
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigation.replace("GhanaCardLinked", { cardNumber: card });
+    }, 700);
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Link Ghana Card</Text>
-      </View>
-
-      <View style={styles.content}>
-        {/* Instructions */}
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsText}>
-            Enter your Ghana Card number and the verification code sent to your registered phone number.
-          </Text>
+    <Screen
+      header={<AppHeader title="Link Ghana Card" back />}
+      footer={
+        <View style={styles.footer}>
+          {step === 0 ? (
+            <Button label="Send verification code" icon="chatbubble-ellipses-outline" onPress={sendCode} loading={loading} />
+          ) : (
+            <>
+              <Button label="Verify and link" icon="shield-checkmark-outline" onPress={verify} loading={loading} />
+              <Button variant="ghost" label="Use a different card number" onPress={() => { setStep(0); setCode(""); setError(undefined); }} />
+            </>
+          )}
         </View>
+      }
+    >
+      <StepIndicator steps={["Card number", "Verify", "Done"]} current={step} />
 
-        {/* Ghana Card Number Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Ghana Card Number (e.g., GHA-123456789-0)"
-            placeholderTextColor={Colors.textSecondary}
-            value={ghanaCardNumber}
-            onChangeText={setGhanaCardNumber}
+      {step === 0 ? (
+        <>
+          <View style={styles.intro}>
+            <Text style={styles.title} accessibilityRole="header">
+              Enter your Ghana Card number
+            </Text>
+            <Text style={styles.body}>
+              Linking lets hospitals confirm who you are with one card, and keeps your NHIS record up to date.
+            </Text>
+          </View>
+          <Card style={styles.sample}>
+            <Icon name="id-card-outline" size={28} color={colors.primary} />
+            <Text style={styles.sampleText}>
+              Find the number under your photo on the front of the card:{"\n"}
+              <Text style={styles.mono}>GHA-123456789-0</Text>
+            </Text>
+          </Card>
+          <TextField
+            label="Ghana Card number"
+            placeholder="GHA-000000000-0"
+            icon="id-card-outline"
+            value={card}
+            onChangeText={(t) => {
+              setCard(formatCard(t));
+              setError(undefined);
+            }}
             autoCapitalize="characters"
             autoCorrect={false}
+            maxLength={15}
+            error={error}
           />
-        </View>
-
-        {/* Verification Code Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="6-digit Verification Code"
-            placeholderTextColor={Colors.textSecondary}
-            value={verificationCode}
-            onChangeText={setVerificationCode}
-            keyboardType="numeric"
+        </>
+      ) : (
+        <>
+          <View style={styles.intro}>
+            <Text style={styles.title} accessibilityRole="header">
+              Enter the 6-digit code
+            </Text>
+            <Text style={styles.body}>
+              We sent it by SMS to {profile.phone.replace(/\d(?=\d{3})/g, "•")}, the number registered with NIA.
+            </Text>
+          </View>
+          <Banner tone="info" title={`Card ${card}`} message="The code expires in 10 minutes." />
+          <TextField
+            label="Verification code"
+            placeholder="000000"
+            icon="keypad-outline"
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
             maxLength={6}
-            autoCorrect={false}
+            value={code}
+            onChangeText={(t) => {
+              setCode(t.replace(/\D/g, ""));
+              setError(undefined);
+            }}
+            error={error}
           />
-        </View>
-
-        {/* Link Card Button */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.linkButton} onPress={handleLinkCard}>
-            <Text style={styles.linkButtonText}>Link Card</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <FooterNav />
-    </View>
+        </>
+      )}
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.backgroundSecondary,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 8,
-    justifyContent: 'space-between',
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.textPrimary,
-  },
-  headerTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-    marginRight: 48,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  instructionsContainer: {
-    paddingVertical: 16,
-    paddingBottom: 24,
-  },
-  instructionsText: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    paddingVertical: 12,
-  },
-  input: {
-    backgroundColor: Colors.inputBackground,
-    borderRadius: 12,
-    height: 56,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: Colors.textPrimary,
-    borderWidth: 0,
-  },
-  buttonContainer: {
-    paddingVertical: 12,
-  },
-  linkButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  linkButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    lineHeight: 24,
-  },
+  intro: { gap: spacing.sm },
+  title: { color: colors.ink, ...type.title },
+  body: { color: colors.inkMuted, ...type.body },
+  sample: { flexDirection: "row", gap: spacing.md, alignItems: "center" },
+  sampleText: { color: colors.inkMuted, ...type.caption, flex: 1 },
+  mono: { color: colors.ink, fontWeight: "700", letterSpacing: 1 },
+  footer: { gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
 });

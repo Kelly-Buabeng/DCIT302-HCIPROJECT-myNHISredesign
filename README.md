@@ -31,6 +31,27 @@ myNHIS is a mobile app for Ghana’s National Health Insurance Scheme (NHIS) mem
 
 
 
+## Screenshots
+
+The redesign uses one bottom tab bar (Home · My Card · Claims · Benefits · Profile) for everything you do often, and short step-by-step flows with a back arrow for tasks (renewing, linking a Ghana Card).
+
+| Login | Home | My Card | Claims | Benefits |
+|---|---|---|---|---|
+| ![Login](docs/screenshots/01-login.png) | ![Home](docs/screenshots/03-home.png) | ![My Card](docs/screenshots/04-card.png) | ![Claims](docs/screenshots/05-claims.png) | ![Benefits](docs/screenshots/06-benefits.png) |
+
+| Profile | Renew | Payment done | Link Ghana Card | Card linked |
+|---|---|---|---|---|
+| ![Profile](docs/screenshots/07-profile.png) | ![Renew](docs/screenshots/08-renew.png) | ![Renewal confirmation](docs/screenshots/09-confirm.png) | ![Link Ghana Card](docs/screenshots/10-link.png) | ![Ghana Card linked](docs/screenshots/11-linked.png) |
+
+Demo login: username `kwame` with any password.
+
+### Design principles
+- **One way to get around.** Five labelled tabs; the active tab is filled and highlighted. Task screens always have a back arrow.
+- **Say it in plain words.** Labels sit above every input, errors appear under the field that caused them, and buttons say what they do ("Pay GH₵ 15.00", "Send verification code").
+- **Status is never colour alone.** Every status badge has an icon and a word (Pending, Approved…).
+- **Readable and tappable.** All text meets WCAG AA contrast; every tap target is at least 48 px.
+- **Show progress.** Multi-step tasks show "Plan → Payment → Confirm" and end on a clear confirmation with a receipt.
+
 ## Installation
 
 ### Prerequisites
@@ -77,7 +98,8 @@ mynhis/
   ├── metro.config.js        # Metro bundler config
   ├── src/
   │   ├── screens/           # Main app screens (Login, Home, Profile, etc.)
-  │   ├── components/        # Shared UI components
+  │   ├── theme/             # Design tokens: colours, type, spacing, radii
+  │   ├── components/ui/     # Shared UI kit (Button, TextField, TabBar, MembershipCard…)
   │   ├── data/              # Dummy data for membership, claims, etc.
   │   └── types/             # TypeScript types for navigation and data
   └── assets/                # Images, icons, etc.

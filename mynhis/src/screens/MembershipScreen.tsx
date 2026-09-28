@@ -1,236 +1,105 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from "react-native";
+import { useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
-import { MaterialIcons } from '@expo/vector-icons';
-import FooterNav from "../components/FooterNav";
-import { Colors } from '../constants/colors';
+import { AppHeader, Button, Card, ListRow, MembershipCard, Screen, Section, StatusBadge, TabBar } from "../components/ui";
+import { dependents as initialDependents, membership, profile } from "../data/dummyData";
+import { colors, spacing, type } from "../theme";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface Dependent {
-  id: string;
-  name: string;
-  relationship: string;
-  imageUrl: string;
-}
-
 export default function MembershipScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const insets = useSafeAreaInsets();
+  const [masked, setMasked] = useState(true);
+  const [dependents, setDependents] = useState(initialDependents);
 
-  const dependents: Dependent[] = [
-    {
-      id: "1",
-      name: "Kwame Mensah",
-      relationship: "Child",
-      imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAP99mOg4ApCAAIUafFl8TBuTqaXfgjgVClx-AWpS2W0CBKuZkK13Up7UR_9tipQ0MSY0992YkLYjP_QXBY6yiRcYMSAQlSVnMv8pVdRCdX93k9IbAfXkVZVCcaTksWDHEWV28Z4scfdbXq6Umo1WDmwDNOXZfXjGmgVF6EKmpYW12DTMvAVUaB9kRKLprg4Jchpr4hjVCtpQ5KjFF9SIVuKMcD0_2AXBRb-yhcOpg9MYGIE7CQ0hyTnI0BZBDhPPwd05tYngpArww"
-    },
-    {
-      id: "2", 
-      name: "Akosua Boateng",
-      relationship: "Spouse",
-      imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuD-NbhmkSQt6O5_0kJHox9krh-a41UUC3bTxYFP38oqcZr8w_42zBjjMmj6RjZEF8_Q6r4xHV2gFIGejiTYLRTuxgUJXDUK4LsDVRl5MQ7OMxersAaWVSgXeGgJ8RchLkJRuhj88sLfI1Ocm766urWCKlqDu-iOwKFeNaSk3wf4pomwFoBZnh6Jt6LJaJQgHdDkHVF2ijSFxjvqENSxdNik6nZehMA-ou8_qNNiKLRPTSzcu1IFAbwGB0PNlkX28fdU7ohnZEN9oSc"
-    },
-    {
-      id: "3",
-      name: "Yaw Appiah", 
-      relationship: "Child",
-      imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuC_vQd7XxoxSiLvhMuKa-Awm5xTRYhJs46h-lJ-6xw29SBYsZGj8TckFS_F7FOisuvgZD-9JVr0XA8C6e383Hl1LDtq-N0Q4Tpg9dknoOt51bg9sLGZOEmQnpmUX2CibGHunZzt-8BbdqMrZ-_uc2ybJuN2QUXjSbwEl3qE0K7aACqjA-EGOaN70oO_heCLSPfQkOH3nMQXYJuBDw24FsyVjoKB-txbVz8IEvffv8c_j8n2cPaGf8C3OzM4JGLKBaQG6pV5H6x--xE"
-    }
-  ];
-
-  const handleDeleteDependent = (dependentId: string, dependentName: string) => {
-    Alert.alert(
-      "Remove Dependent",
-      `Are you sure you want to remove ${dependentName} from your dependents?`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: () => {
-            // Handle dependent removal logic here
-            Alert.alert("Success", `${dependentName} has been removed from your dependents.`);
-          }
-        }
-      ]
-    );
-  };
-
-  const handleAddDependent = () => {
-    Alert.alert(
-      "Add Dependent", 
-      "This feature will allow you to add a new dependent to your NHIS coverage.",
-      [{ text: "OK" }]
-    );
+  const removeDependent = (id: number, name: string) => {
+    Alert.alert("Remove dependent?", `${name} will lose NHIS cover under your membership.`, [
+      { text: "Keep", style: "cancel" },
+      { text: "Remove", style: "destructive", onPress: () => setDependents((d) => d.filter((x) => x.id !== id)) },
+    ]);
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <MaterialIcons name="arrow-back" size={24} color={Colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Manage Dependents</Text>
-        <View style={styles.headerSpacer} />
+    <Screen header={<AppHeader title="My Card" />} footer={<TabBar active="Membership" />} padBottom={false}>
+      <View style={styles.cardBlock}>
+        <MembershipCard
+          name={profile.name}
+          nhisNumber={profile.nhisNumber}
+          plan={membership.plan}
+          validUntil={membership.validUntil}
+          active={membership.status === "active"}
+          masked={masked}
+        />
+        <Button
+          variant="ghost"
+          icon={masked ? "eye-outline" : "eye-off-outline"}
+          label={masked ? "Show full number" : "Hide number"}
+          onPress={() => setMasked((m) => !m)}
+        />
+        <Text style={styles.note}>Show this card at any NHIS-accredited facility.</Text>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Current Dependents Section */}
-        <Text style={styles.sectionTitle}>Current Dependents</Text>
-        
-        {dependents.map((dependent) => (
-          <View key={dependent.id} style={styles.dependentItem}>
-            <View style={styles.dependentInfo}>
-              <Image 
-                source={{ uri: dependent.imageUrl }}
-                style={styles.dependentImage}
+      <Section title="Membership details">
+        <Card padding="none">
+          <ListRow icon="shield-checkmark-outline" title="Status" trailing={<StatusBadge label="Active" status="success" />} />
+          <ListRow icon="layers-outline" title="Plan" trailing={membership.plan} divider />
+          <ListRow icon="person-outline" title="Category" trailing={membership.category} divider />
+          <ListRow icon="calendar-outline" title="Valid until" trailing={membership.validUntil} divider />
+          <ListRow icon="location-outline" title="Scheme" subtitle={membership.scheme} divider />
+        </Card>
+        <Button label="Renew membership" icon="refresh" onPress={() => navigation.navigate("Renew")} />
+      </Section>
+
+      <Section title="Ghana Card">
+        <Card padding="none">
+          <ListRow
+            icon="id-card-outline"
+            title={profile.ghanaCard ? "Ghana Card linked" : "Not linked yet"}
+            subtitle={profile.ghanaCard ?? "Link it to verify your identity faster"}
+            trailing={profile.ghanaCard ? <StatusBadge label="Linked" status="success" /> : <StatusBadge label="To do" status="warning" />}
+            onPress={() => navigation.navigate("LinkGhanaCard")}
+          />
+        </Card>
+      </Section>
+
+      <Section title={`Dependents (${dependents.length})`}>
+        {dependents.length === 0 ? (
+          <Card>
+            <Text style={styles.empty}>No dependents on your membership.</Text>
+          </Card>
+        ) : (
+          <Card padding="none">
+            {dependents.map((d, i) => (
+              <ListRow
+                key={d.id}
+                icon={d.relationship === "Spouse" ? "heart-outline" : "happy-outline"}
+                title={d.name}
+                subtitle={`${d.relationship} · ${d.nhisNumber}`}
+                trailing={
+                  <Button variant="ghost" block={false} label="Remove" onPress={() => removeDependent(d.id, d.name)} />
+                }
+                divider={i > 0}
               />
-              <View style={styles.dependentDetails}>
-                <Text style={styles.dependentName}>{dependent.name}</Text>
-                <Text style={styles.dependentRelationship}>{dependent.relationship}</Text>
-              </View>
-            </View>
-            <TouchableOpacity 
-              style={styles.deleteButton}
-              onPress={() => handleDeleteDependent(dependent.id, dependent.name)}
-            >
-              <MaterialIcons name="delete" size={24} color={Colors.error} />
-            </TouchableOpacity>
-          </View>
-        ))}
-
-        {/* Add Dependent Button */}
-        <View style={styles.addButtonContainer}>
-          <TouchableOpacity 
-            style={styles.addButton}
-            onPress={handleAddDependent}
-          >
-            <Text style={styles.addButtonText}>Add Dependent</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Bottom spacing */}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
-      
-      <FooterNav />
-    </View>
+            ))}
+          </Card>
+        )}
+        <Button
+          variant="secondary"
+          icon="person-add-outline"
+          label="Add a dependent"
+          onPress={() =>
+            Alert.alert("Add a dependent", "Bring the dependent's Ghana Card or birth certificate to your district office to add them.")
+          }
+        />
+      </Section>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 8,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-    marginRight: 48, // Offset for back button
-  },
-  headerSpacer: {
-    width: 48,
-  },
-  content: {
-    flex: 1,
-  },
-  sectionTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-    paddingTop: 16,
-  },
-  dependentItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    minHeight: 72,
-    justifyContent: 'space-between',
-  },
-  dependentInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  dependentImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    marginRight: 16,
-  },
-  dependentDetails: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  dependentName: {
-    color: Colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  dependentRelationship: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '400',
-  },
-  deleteButton: {
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addButtonContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  addButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    minWidth: 84,
-    maxWidth: 480,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  bottomSpacing: {
-    height: 20,
-  },
+  cardBlock: { gap: spacing.sm },
+  note: { color: colors.inkMuted, ...type.caption, textAlign: "center" },
+  empty: { color: colors.inkMuted, ...type.body },
 });

@@ -1,300 +1,128 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from "../types/navigation";
-import FooterNav from "../components/FooterNav";
-import { Colors } from '../constants/colors';
+import { AppHeader, Button, Card, OptionCard, Screen, Section, StepIndicator, TextField } from "../components/ui";
+import { membership, paymentMethods, plans, profile } from "../data/dummyData";
+import { colors, spacing, type } from "../theme";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+const cedi = (n: number) => `GH₵ ${n.toFixed(2)}`;
+
 export default function RenewScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [selectedPlan, setSelectedPlan] = useState('standard');
-  const [selectedPayment, setSelectedPayment] = useState('mobile-money');
-  const insets = useSafeAreaInsets();
+  const [planId, setPlanId] = useState("standard");
+  const [methodId, setMethodId] = useState("momo");
+  const [phone, setPhone] = useState(profile.phone);
+  const [phoneError, setPhoneError] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
-  const handleRenewNow = () => {
-    const planName = selectedPlan === 'standard' ? 'Standard Plan' : 'Premium Plan';
-    const paymentMethod = selectedPayment === 'mobile-money' ? 'Mobile Money' : 'Bank Transfer';
-    
-    Alert.alert(
-      "Renewal Confirmation",
-      `Renewing with ${planName} using ${paymentMethod}`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Proceed", 
-          onPress: () => {
-            // Navigate to renewal confirmation screen
-            navigation.navigate("RenewalConfirmation");
-          }
-        }
-      ]
-    );
+  const plan = plans.find((p) => p.id === planId)!;
+  const method = paymentMethods.find((m) => m.id === methodId)!;
+
+  const handlePay = () => {
+    if (methodId === "momo" && phone.replace(/\D/g, "").length < 10) {
+      setPhoneError("Enter the 10-digit Mobile Money number that will approve the payment");
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigation.replace("RenewalConfirmation", {
+        plan: `${plan.name} Plan`,
+        amount: cedi(plan.price),
+        method: method.name,
+        reference: `RNW-${Date.now().toString().slice(-6)}`,
+        validUntil: "28 Oct 2027",
+      });
+    }, 900);
   };
 
-  const RadioButton = ({ 
-    selected, 
-    onPress, 
-    title, 
-    description 
-  }: { 
-    selected: boolean; 
-    onPress: () => void; 
-    title: string; 
-    description?: string; 
-  }) => (
-    <TouchableOpacity 
-      style={[styles.radioContainer, selected && styles.radioContainerSelected]} 
-      onPress={onPress}
-    >
-      <View style={styles.radioContent}>
-        <View style={styles.radioTextContainer}>
-          <Text style={styles.radioTitle}>{title}</Text>
-          {description && <Text style={styles.radioDescription}>{description}</Text>}
-        </View>
-        <View style={[styles.radioCircle, selected && styles.radioCircleSelected]}>
-          {selected && <View style={styles.radioInner} />}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Renew Membership</Text>
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          {/* Expiry Notice */}
-          <Text style={styles.expiryNotice}>
-            Your current membership expires on 2024-08-15. Renew now to continue enjoying uninterrupted health coverage.
-          </Text>
-
-          {/* Membership Details Section */}
-          <Text style={styles.sectionTitle}>Membership Details</Text>
-          <View style={styles.detailsContainer}>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Membership ID</Text>
-              <Text style={styles.detailValue}>NHIS-123456789</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Expiry Date</Text>
-              <Text style={styles.detailValue}>2024-08-15</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Coverage Type</Text>
-              <Text style={styles.detailValue}>Standard</Text>
-            </View>
+    <Screen
+      header={<AppHeader title="Renew membership" back />}
+      footerSurface
+      footer={
+        <View style={styles.footer}>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Total to pay</Text>
+            <Text style={styles.total}>{cedi(plan.price)}</Text>
           </View>
-
-          {/* Renewal Options Section */}
-          <Text style={styles.sectionTitle}>Renewal Options</Text>
-          <View style={styles.optionsContainer}>
-            <RadioButton
-              selected={selectedPlan === 'standard'}
-              onPress={() => setSelectedPlan('standard')}
-              title="Standard Plan"
-              description="Basic coverage for essential healthcare services."
-            />
-            <RadioButton
-              selected={selectedPlan === 'premium'}
-              onPress={() => setSelectedPlan('premium')}
-              title="Premium Plan"
-              description="Enhanced coverage with additional benefits and services."
-            />
-          </View>
-
-          {/* Payment Method Section */}
-          <Text style={styles.sectionTitle}>Payment Method</Text>
-          <View style={styles.optionsContainer}>
-            <RadioButton
-              selected={selectedPayment === 'mobile-money'}
-              onPress={() => setSelectedPayment('mobile-money')}
-              title="Mobile Money"
-            />
-            <RadioButton
-              selected={selectedPayment === 'bank-transfer'}
-              onPress={() => setSelectedPayment('bank-transfer')}
-              title="Bank Transfer"
-            />
-          </View>
+          <Button label={`Pay ${cedi(plan.price)}`} icon="lock-closed" onPress={handlePay} loading={loading} />
         </View>
-      </ScrollView>
+      }
+    >
+      <StepIndicator steps={["Plan", "Payment", "Confirm"]} current={1} />
 
-      {/* Renew Button */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.renewButton} onPress={handleRenewNow}>
-          <Text style={styles.renewButtonText}>Renew Now</Text>
-        </TouchableOpacity>
-      </View>
+      <Card>
+        <Text style={styles.cardLabel}>Current cover ends</Text>
+        <Text style={styles.cardValue}>
+          {membership.validUntil} · {membership.daysLeft} days left
+        </Text>
+        <Text style={styles.cardHint}>Renewing adds 12 months from that date, so you lose no days.</Text>
+      </Card>
 
-      <FooterNav />
-    </View>
+      <Section title="1. Choose a plan">
+        <View style={styles.options} accessibilityRole="radiogroup">
+          {plans.map((p) => (
+            <OptionCard
+              key={p.id}
+              title={p.name}
+              description={p.description}
+              value={`${cedi(p.price)}/yr`}
+              tag={p.tag}
+              selected={planId === p.id}
+              onPress={() => setPlanId(p.id)}
+            />
+          ))}
+        </View>
+      </Section>
+
+      <Section title="2. Pay with">
+        <View style={styles.options} accessibilityRole="radiogroup">
+          {paymentMethods.map((m) => (
+            <OptionCard
+              key={m.id}
+              title={m.name}
+              description={m.description}
+              icon={m.icon}
+              selected={methodId === m.id}
+              onPress={() => setMethodId(m.id)}
+            />
+          ))}
+        </View>
+        {methodId === "momo" && (
+          <TextField
+            label="Mobile Money number"
+            icon="call-outline"
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={(t) => {
+              setPhone(t);
+              setPhoneError(undefined);
+            }}
+            helper="You'll get a prompt on this phone to approve with your MoMo PIN."
+            error={phoneError}
+          />
+        )}
+      </Section>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.backgroundSecondary,
+  options: { gap: spacing.md },
+  cardLabel: { color: colors.inkMuted, ...type.caption },
+  cardValue: { color: colors.ink, ...type.heading, marginTop: 2 },
+  cardHint: { color: colors.inkMuted, ...type.caption, marginTop: spacing.sm },
+  footer: {
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 8,
-    justifyContent: 'space-between',
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.textPrimary,
-  },
-  headerTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-    marginRight: 48,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 16,
-  },
-  expiryNotice: {
-    color: Colors.textPrimary,
-    fontSize: 16,
-    fontWeight: 'normal',
-    lineHeight: 24,
-    paddingBottom: 12,
-    paddingTop: 4,
-  },
-  sectionTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    lineHeight: 24,
-    paddingBottom: 8,
-    paddingTop: 16,
-  },
-  detailsContainer: {
-    paddingVertical: 16,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingVertical: 20,
-  },
-  detailLabel: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    fontWeight: 'normal',
-    lineHeight: 20,
-    flex: 1,
-  },
-  detailValue: {
-    color: Colors.textPrimary,
-    fontSize: 14,
-    fontWeight: 'normal',
-    lineHeight: 20,
-    flex: 2,
-    textAlign: 'right',
-  },
-  optionsContainer: {
-    flexDirection: 'column',
-    gap: 12,
-    paddingVertical: 16,
-  },
-  radioContainer: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    padding: 15,
-    backgroundColor: Colors.background,
-  },
-  radioContainerSelected: {
-    borderColor: Colors.primary,
-  },
-  radioContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  radioTextContainer: {
-    flex: 1,
-    marginRight: 16,
-  },
-  radioTitle: {
-    color: Colors.textPrimary,
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 20,
-  },
-  radioDescription: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    fontWeight: 'normal',
-    lineHeight: 20,
-    marginTop: 2,
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioCircleSelected: {
-    borderColor: Colors.primary,
-  },
-  radioInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Colors.primary,
-  },
-  buttonContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  renewButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  renewButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    lineHeight: 24,
-  },
+  totalRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" },
+  totalLabel: { color: colors.inkMuted, ...type.body },
+  total: { color: colors.ink, ...type.title },
 });

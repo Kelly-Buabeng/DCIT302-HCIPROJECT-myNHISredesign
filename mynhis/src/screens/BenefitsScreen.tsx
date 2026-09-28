@@ -1,259 +1,83 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { RootStackParamList } from "../types/navigation";
-import FooterNav from "../components/FooterNav";
-import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
-import Colors from '../constants/colors';
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-interface Benefit {
-  id: string;
-  iconName: string;
-  iconLibrary: 'MaterialIcons' | 'FontAwesome' | 'Ionicons';
-  title: string;
-  description: string;
-}
+import { useState } from "react";
+import { LayoutAnimation, Pressable, StyleSheet, Text, View } from "react-native";
+import { AppHeader, Banner, Card, Icon, Screen, TabBar } from "../components/ui";
+import { benefits } from "../data/dummyData";
+import { colors, radius, spacing, type } from "../theme";
 
 export default function BenefitsScreen() {
-  const navigation = useNavigation<NavigationProp>();
-  const insets = useSafeAreaInsets();
+  const [open, setOpen] = useState<string | null>(null);
 
-  const benefits: Benefit[] = [
-    {
-      id: "1",
-      iconName: "local-hospital",
-      iconLibrary: "MaterialIcons",
-      title: "Medical Consultations",
-      description: "Access to a wide range of medical services"
-    },
-    {
-      id: "2",
-      iconName: "medication",
-      iconLibrary: "MaterialIcons",
-      title: "Prescription Drugs",
-      description: "Coverage for essential medications"
-    },
-    {
-      id: "3",
-      iconName: "hotel",
-      iconLibrary: "MaterialIcons",
-      title: "Hospitalization",
-      description: "Inpatient care and hospital stays"
-    },
-    {
-      id: "4",
-      iconName: "biotech",
-      iconLibrary: "MaterialIcons",
-      title: "Laboratory Services",
-      description: "Coverage for diagnostic tests"
-    },
-    {
-      id: "5",
-      iconName: "child-friendly",
-      iconLibrary: "MaterialIcons",
-      title: "Maternity Care",
-      description: "Maternity care and childbirth services"
-    },
-    {
-      id: "6",
-      iconName: "emergency",
-      iconLibrary: "MaterialIcons",
-      title: "Emergency Services",
-      description: "Coverage for emergency medical situations"
-    }
-  ];
-
-  const BenefitItem = ({ benefit }: { benefit: Benefit }) => {
-    const IconComponent = benefit.iconLibrary === 'MaterialIcons' 
-      ? MaterialIcons 
-      : benefit.iconLibrary === 'FontAwesome' 
-      ? FontAwesome 
-      : Ionicons;
-
-    return (
-      <View style={styles.benefitItem}>
-        <View style={styles.iconContainer}>
-          <IconComponent name={benefit.iconName as any} size={32} color={Colors.primary} />
-        </View>
-        <View style={styles.benefitContent}>
-          <Text style={styles.benefitTitle}>{benefit.title}</Text>
-          <Text style={styles.benefitDescription}>{benefit.description}</Text>
-        </View>
-      </View>
-    );
+  const toggle = (id: string) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setOpen((o) => (o === id ? null : id));
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Benefits</Text>
-      </View>
+    <Screen header={<AppHeader title="Benefits" />} footer={<TabBar active="Benefits" />} padBottom={false}>
+      <Text style={styles.intro}>What your NHIS membership pays for at accredited hospitals, clinics and pharmacies.</Text>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          {/* Header Description */}
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.descriptionTitle}>Your NHIS Benefits</Text>
-            <Text style={styles.descriptionText}>
-              Comprehensive healthcare coverage designed to protect you and your family
-            </Text>
-          </View>
-
-          {benefits.map((benefit) => (
-            <BenefitItem key={benefit.id} benefit={benefit} />
-          ))}
-
-          {/* Coverage Note */}
-          <View style={styles.noteContainer}>
-            <View style={styles.noteIcon}>
-              <MaterialIcons name="info" size={20} color={Colors.secondary} />
+      <Card padding="none">
+        {benefits.map((b, i) => {
+          const expanded = open === b.id;
+          return (
+            <View key={b.id} style={i > 0 && styles.divider}>
+              <Pressable
+                onPress={() => toggle(b.id)}
+                accessibilityRole="button"
+                accessibilityState={{ expanded }}
+                accessibilityLabel={`${b.title}. ${b.summary}`}
+                accessibilityHint={expanded ? "Hides details" : "Shows what is included"}
+                style={({ pressed }) => [styles.row, pressed && { backgroundColor: colors.primarySoft }]}
+              >
+                <View style={styles.tile}>
+                  <Icon name={b.icon} size={22} color={colors.primary} />
+                </View>
+                <View style={styles.text}>
+                  <Text style={styles.title}>{b.title}</Text>
+                  <Text style={styles.summary}>{b.summary}</Text>
+                </View>
+                <Icon name={expanded ? "chevron-up" : "chevron-down"} size={20} color={colors.inkMuted} />
+              </Pressable>
+              {expanded && (
+                <View style={styles.details}>
+                  {b.details.map((d) => (
+                    <View key={d} style={styles.detail}>
+                      <Icon name="checkmark-circle" size={18} color={colors.success} />
+                      <Text style={styles.detailText}>{d}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
-            <Text style={styles.noteText}>
-              All benefits are subject to terms and conditions. Contact your healthcare provider for specific coverage details.
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
+          );
+        })}
+      </Card>
 
-      <FooterNav />
-    </View>
+      <Banner
+        tone="info"
+        title="Not sure if something is covered?"
+        message="Ask at the facility's NHIS desk before treatment, or call the NHIA helpline."
+      />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.backgroundSecondary,
+  intro: { color: colors.inkMuted, ...type.body },
+  divider: { borderTopWidth: 1, borderTopColor: colors.border },
+  row: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.lg, minHeight: 64 },
+  tile: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 8,
-    justifyContent: 'space-between',
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.textPrimary,
-  },
-  headerTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-    marginRight: 48,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    backgroundColor: Colors.backgroundSecondary,
-    paddingBottom: 20,
-  },
-  descriptionContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 20,
-    backgroundColor: Colors.cardBackground,
-    marginHorizontal: 16,
-    marginBottom: 20,
-    borderRadius: 12,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  descriptionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.textPrimary,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  descriptionText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  benefitItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    backgroundColor: Colors.cardBackground,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginHorizontal: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: Colors.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  benefitContent: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  benefitTitle: {
-    color: Colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 24,
-    marginBottom: 4,
-  },
-  benefitDescription: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    fontWeight: 'normal',
-    lineHeight: 20,
-  },
-  noteContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: Colors.secondarySoft,
-    marginHorizontal: 16,
-    marginTop: 8,
-    padding: 16,
-    borderRadius: 12,
-    gap: 12,
-  },
-  noteIcon: {
-    marginTop: 2,
-  },
-  noteText: {
-    flex: 1,
-    fontSize: 12,
-    color: Colors.textSecondary,
-    lineHeight: 18,
-  },
+  text: { flex: 1, gap: 2 },
+  title: { color: colors.ink, ...type.body, fontWeight: "600" },
+  summary: { color: colors.inkMuted, ...type.caption },
+  details: { paddingLeft: 76, paddingRight: spacing.lg, paddingBottom: spacing.lg, gap: spacing.sm },
+  detail: { flexDirection: "row", gap: spacing.sm, alignItems: "flex-start" },
+  detailText: { color: colors.ink, ...type.body, flex: 1 },
 });
