@@ -1,32 +1,32 @@
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types/navigation";
-import { Button, FormRow, Group, Icon, Screen } from "../components/ui";
-import { colors, spacing, type } from "../theme";
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { RootStack } from "../navigation/types";
+import { Button, Field, Icon, Notice, T } from "../components";
+import { color, radius, space } from "../theme";
 
 // Demo accounts — any password works.
-const DEMO_IDS = ["kwame", "321098765432", "nhis123456789", "emmanuel", "mensah"];
+const DEMO_IDS = ["kwame", "321098765432", "0241234567"];
 
 export default function LoginScreen() {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStack>>();
+  const insets = useSafeAreaInsets();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<{ field?: "id" | "password"; message: string }>();
+  const [errors, setErrors] = useState<{ id?: string; password?: string; form?: string }>({});
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (!id.trim()) return setError({ field: "id", message: "Enter your NHIS number or username." });
-    if (!password.trim()) return setError({ field: "password", message: "Enter your password." });
-
-    const normalised = id.replace(/[\s-]/g, "").toLowerCase();
-    if (!DEMO_IDS.includes(normalised)) {
-      return setError({ message: "We couldn't find an account with those details. Check them and try again." });
+  const logIn = () => {
+    const next: typeof errors = {};
+    if (!id.trim()) next.id = "Enter your NHIS number or phone number.";
+    if (!password.trim()) next.password = "Enter your password.";
+    if (next.id || next.password) return setErrors(next);
+    if (!DEMO_IDS.includes(id.replace(/[\s-]/g, "").toLowerCase())) {
+      return setErrors({ form: "Those details don't match an account. Check them and try again." });
     }
-    setError(undefined);
+    setErrors({});
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -35,86 +35,113 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen
-      footer={
-        <View style={styles.footer}>
-          <Button label="Log In" onPress={handleLogin} loading={loading} />
-          <Button
-            variant="plain"
-            label="Create Account"
-            onPress={() => Alert.alert("Create Account", "To register, visit any NHIS district office with your Ghana Card. You can then log in here.")}
-          />
-        </View>
-      }
-    >
-      <View style={styles.hero}>
-        <View style={styles.appIcon}>
-          <Icon name="medical" size={44} color={colors.onTint} />
-        </View>
-        <Text style={styles.title} accessibilityRole="header">
-          myNHIS
-        </Text>
-        <Text style={styles.subtitle}>Your health cover, card and claims in one place.</Text>
-      </View>
+    <View style={styles.root}>
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <ScrollView contentContainerStyle={styles.grow} keyboardShouldPersistTaps="handled" bounces={false}>
+          <View style={[styles.brand, { paddingTop: insets.top + space[10] }]}>
+            <View style={styles.logo}>
+              <Icon name="plus" size={26} color={color.brand} />
+            </View>
+            <T v="hero" c={color.onBrand}>
+              myNHIS
+            </T>
+            <T v="body" c={color.onBrandMuted}>
+              Your health cover, in your pocket.
+            </T>
+          </View>
 
-      <Group error={error?.message} footer="Demo: use “kwame” with any password.">
-        <FormRow
-          label="NHIS No."
-          placeholder="3210 9876 5432"
-          value={id}
-          onChangeText={(t) => {
-            setId(t);
-            setError(undefined);
-          }}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="next"
-          textContentType="username"
-          invalid={error?.field === "id" || (!!error && !error.field)}
-        />
-        <FormRow
-          label="Password"
-          placeholder="Required"
-          secure
-          value={password}
-          onChangeText={(t) => {
-            setPassword(t);
-            setError(undefined);
-          }}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="go"
-          textContentType="password"
-          onSubmitEditing={handleLogin}
-          invalid={error?.field === "password"}
-        />
-      </Group>
+          <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, space[6]) }]}>
+            <T v="title" accessibilityRole="header">
+              Log in
+            </T>
 
-      <View style={styles.forgot}>
-        <Button
-          variant="plain"
-          size="small"
-          label="Forgot Password?"
-          onPress={() => Alert.alert("Reset Password", "We'll send a reset code by SMS to the phone number on your NHIS record.")}
-        />
-      </View>
-    </Screen>
+            {errors.form ? <Notice tone="danger" icon="alert-circle" title="Couldn't log you in" message={errors.form} /> : null}
+
+            <Field
+              label="NHIS number or phone"
+              placeholder="e.g. 3210 9876 5432"
+              value={id}
+              onChangeText={(t) => {
+                setId(t);
+                setErrors({});
+              }}
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="username"
+              error={errors.id}
+            />
+            <View style={styles.gapSm}>
+              <Field
+                label="Password"
+                placeholder="Your password"
+                secure
+                value={password}
+                onChangeText={(t) => {
+                  setPassword(t);
+                  setErrors({});
+                }}
+                autoCapitalize="none"
+                textContentType="password"
+                onSubmitEditing={logIn}
+                returnKeyType="go"
+                error={errors.password}
+              />
+              <Pressable
+                onPress={() => Alert.alert("Reset password", "We'll text a reset code to the phone number on your NHIS record.")}
+                accessibilityRole="button"
+                hitSlop={10}
+                style={styles.forgot}
+              >
+                <T v="smallStrong" c={color.brand} style={styles.underline}>
+                  Forgot password?
+                </T>
+              </Pressable>
+            </View>
+
+            <View style={styles.actions}>
+              <Button label="Log in" onPress={logIn} loading={loading} />
+              <Button
+                variant="secondary"
+                label="Create an account"
+                onPress={() => Alert.alert("Create an account", "Register at any NHIS district office with your Ghana Card, then log in here.")}
+              />
+            </View>
+
+            <T v="small" c={color.ink2} center>
+              Demo: “kwame” with any password
+            </T>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: { alignItems: "center", gap: spacing.sm, marginTop: 56 },
-  appIcon: {
-    width: 88,
-    height: 88,
-    borderRadius: 20,
-    backgroundColor: colors.tint,
+  root: { flex: 1, backgroundColor: color.brand },
+  flex: { flex: 1 },
+  grow: { flexGrow: 1 },
+  brand: { paddingHorizontal: space[6], paddingBottom: space[10], gap: space[2] },
+  logo: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: color.gold,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: spacing.sm,
+    marginBottom: space[4],
   },
-  title: { color: colors.label, ...type.title1 },
-  subtitle: { color: colors.secondaryLabel, ...type.body, textAlign: "center", paddingHorizontal: spacing.xl },
-  forgot: { alignItems: "center", marginTop: -spacing.md },
-  footer: { paddingHorizontal: spacing.lg, gap: spacing.xs },
+  sheet: {
+    flexGrow: 1,
+    backgroundColor: color.bg,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    paddingHorizontal: space[5],
+    paddingTop: space[8],
+    gap: space[5],
+  },
+  gapSm: { gap: space[2] },
+  forgot: { alignSelf: "flex-end", paddingVertical: space[1] },
+  underline: { textDecorationLine: "underline" },
+  actions: { gap: space[3], marginTop: space[2] },
 });

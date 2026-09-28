@@ -19,39 +19,39 @@ myNHIS is a mobile app for Ghana’s National Health Insurance Scheme (NHIS) mem
 
 ## Features
 
-- **Login/Sign Up:** Secure authentication using NHIS credentials. (Demo logic included for testing)
-- **Home Dashboard:** Overview of membership, card expiry, and quick actions for renewal and claims.
-- **Profile Management:** View member info, contact support, and logout.
-- **Membership Details:** Review membership type, expiry, and manage dependents (add/remove family members).
-- **Renew Membership:** Renew plans (Standard, Premium, Family), select payment method (Mobile Money, Bank Transfer), and view current membership status.
-- **Track Claims:** See claim status, amounts, and hospital details.
-- **Link Ghana Card:** Link your NHIS account to your Ghana Card for enhanced verification, with format and code validation.
-- **Benefits Overview:** Browse covered healthcare services, drugs, hospitalization, lab tests, and more.
-- **Accessible Design:** Built using HCI principles for simplicity, clarity, and ease of use.
-
+- **Log in** with your NHIS number or phone; clear inline errors. (Demo: `kwame`, any password.)
+- **Home:** your NHIS card on a green header with days left, four shortcuts (Renew, Claims, Ghana Card, Family), a renewal reminder and recent activity.
+- **Claims:** total covered this year, filters (All / In progress / Paid), claims grouped by month, and a **claim detail** page with a progress timeline (Submitted → In review → Approved → Paid).
+- **Coverage:** what NHIS pays for, as tiles that open a detail sheet, plus what isn't covered.
+- **Membership:** the card with show/hide number, plan details, and family members you can add or remove.
+- **Renew:** choose plan → pay with Mobile Money (MTN, Telecel, AirtelTigo) → approve on your phone → receipt.
+- **Link Ghana Card:** enter your card number (auto-formatted) → 6-digit SMS code → done.
+- **Account:** personal details, settings and log out.
 
 
 ## Screenshots
 
-The look follows Apple's iOS Human Interface Guidelines: large titles, inset grouped lists, Settings-style icons, a segmented control, a Wallet-style membership pass, and tasks that open as sheets. One bottom tab bar (Home · My Card · Claims · Benefits · Profile) holds everything you do often; renewing and linking a Ghana Card open as sheets with **Cancel** and end on a receipt with **Done**.
+A calm "fintech" look: one deep green, Ghana gold as a small accent, thin lines, and lots of space. Four tabs (Home · Claims · Coverage · Account); tasks rise from the bottom and end on a receipt.
 
-| Login | Home | My Card | Claims | Benefits |
+| Login | Home | Claims | Claim detail | Coverage |
 |---|---|---|---|---|
-| ![Login](docs/screenshots/01-login.png) | ![Home](docs/screenshots/03-home.png) | ![My Card](docs/screenshots/04-card.png) | ![Claims](docs/screenshots/05-claims.png) | ![Benefits](docs/screenshots/06-benefits.png) |
+| ![Login](docs/screenshots/01-login.png) | ![Home](docs/screenshots/03-home.png) | ![Claims](docs/screenshots/05-claims.png) | ![Claim detail](docs/screenshots/04-claim-detail.png) | ![Coverage](docs/screenshots/06-coverage.png) |
 
-| Profile | Renew (sheet) | Receipt | Link Ghana Card (sheet) | Card linked |
+| Coverage detail | Account | Membership | Renew: plan | Renew: pay |
 |---|---|---|---|---|
-| ![Profile](docs/screenshots/07-profile.png) | ![Renew](docs/screenshots/08-renew.png) | ![Renewal confirmation](docs/screenshots/09-confirm.png) | ![Link Ghana Card](docs/screenshots/10-link.png) | ![Ghana Card linked](docs/screenshots/11-linked.png) |
+| ![Coverage sheet](docs/screenshots/06b-coverage-sheet.png) | ![Account](docs/screenshots/07-account.png) | ![Membership](docs/screenshots/08-membership.png) | ![Choose plan](docs/screenshots/09-renew-plan.png) | ![Pay](docs/screenshots/10-renew-pay.png) |
 
-Demo login: username `kwame` with any password.
+| Renew: approve | Renew: done | Link card | Link: code |
+|---|---|---|---|
+| ![Approve on phone](docs/screenshots/11-renew-approve.png) | ![You're covered](docs/screenshots/12-renew-done.png) | ![Link Ghana Card](docs/screenshots/13-link.png) | ![Enter code](docs/screenshots/14-link-code.png) |
 
 ### Design principles
-- **Familiar to iPhone users.** Screens reuse patterns people already know from Settings, Wallet, Health and the App Store, so there is little to learn.
-- **One way to get around.** Five labelled tabs; the selected tab turns green with a filled icon. Tasks open as sheets with **Cancel**, and end with **Done**.
-- **Say it in plain words.** Every field has a visible label, errors appear right under the group that caused them, and buttons say what they do ("Pay GH₵ 15.00", "Send Code").
-- **Status is never colour alone.** Every status badge has an icon and a word (Pending, Approved…).
-- **Readable and tappable.** iOS text styles (17 pt body), Apple's increased-contrast system colours so all text meets WCAG AA, and 44 pt minimum tap targets.
-- **Show progress.** Multi-step tasks show "Step 2 of 3 · Payment" and end on a receipt.
+- **One colour, used with restraint.** Deep green for the brand and every action; gold only for "needs attention" and progress; everything else neutral.
+- **Light, not chunky.** Hairline borders instead of shadows, medium-weight type (Plus Jakarta Sans), thin line icons (Feather), generous spacing.
+- **Money-app flow.** The card and what needs doing come first; activity reads like a transaction list; payments end with "approve on your phone" and a receipt.
+- **Plain words.** Labels above every field, errors under the field that caused them, buttons that say the outcome ("Pay GH₵ 15.00", "Send code").
+- **Status is never colour alone.** A dot plus a word (In review, Approved, Paid).
+- **Accessible.** All text meets WCAG AA contrast; tap targets are at least 48 px; screen-reader labels on every control.
 
 ## Installation
 
@@ -78,10 +78,9 @@ Demo login: username `kwame` with any password.
 
 ## Usage
 
-- On launch, sign in with the demo NHIS number (e.g., `NHIS123456789`) or username (`kwame`, `emmanuel`, etc.).
-- Navigate through the home dashboard to renew membership, track claims, and manage your account.
-- Use the profile screen to view details or contact support.
-- Link your Ghana Card in the dedicated screen using the required format for verification.
+- Log in with `kwame` (or `3210 9876 5432`) and any password.
+- Tap the card on Home for membership and family; use the shortcuts to renew or link your Ghana Card.
+- Open any claim to see where it is in the process.
 
 ## Technologies
 
@@ -98,11 +97,11 @@ mynhis/
   ├── index.ts               # Expo root registration
   ├── metro.config.js        # Metro bundler config
   ├── src/
-  │   ├── screens/           # Main app screens (Login, Home, Profile, etc.)
-  │   ├── theme/             # iOS-style tokens: system colours, text styles, spacing, radii
-  │   ├── components/ui/     # Shared UI kit (NavBar, Group, ListRow, FormRow, SegmentedControl, TabBar…)
-  │   ├── data/              # Dummy data for membership, claims, etc.
-  │   └── types/             # TypeScript types for navigation and data
+  │   ├── theme.ts           # Design tokens: colours, type, spacing, radii
+  │   ├── components/        # UI kit (MemberCard, ActivityRow, QuickAction, Field, CodeInput, TabBar…)
+  │   ├── screens/           # Login, Home, Claims, ClaimDetail, Coverage, Account, Membership, Renew, LinkCard, Done
+  │   ├── data/mock.ts       # Demo data for member, claims, plans, coverage
+  │   └── navigation/        # Route types
   └── assets/                # Images, icons, etc.
 ```
 

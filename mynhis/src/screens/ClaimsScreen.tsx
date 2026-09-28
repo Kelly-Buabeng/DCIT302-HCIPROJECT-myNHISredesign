@@ -1,83 +1,115 @@
 import { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Group, Icon, Screen, SegmentedControl, StatusBadge, TabBar } from "../components/ui";
-import { claims, ClaimStatus, claimStatusTone } from "../data/dummyData";
-import { colors, hairline, spacing, type } from "../theme";
+import { StyleSheet, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStack } from "../navigation/types";
+import { ActivityRow, Card, Icon, Pills, Screen, T, TabBar } from "../components";
+import { claims, claimTone } from "../data/mock";
+import { color, space } from "../theme";
 
-type Filter = "All" | ClaimStatus;
+type Filter = "all" | "open" | "paid";
 
-const segments: { value: Filter; label: string }[] = [
-  { value: "All", label: "All" },
-  { value: "Pending", label: "Pending" },
-  { value: "Processing", label: "Processing" },
-  { value: "Approved", label: "Approved" },
+const filters: { value: Filter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "open", label: "In progress" },
+  { value: "paid", label: "Paid" },
 ];
 
-function ClaimRow({ claim, first }: { claim: (typeof claims)[number]; first?: boolean }) {
-  return (
-    <View
-      style={styles.row}
-      accessible
-      accessibilityLabel={`${claim.facility}, ${claim.service}, ${claim.amount}, ${claim.date}, status ${claim.status}`}
-    >
-      <View style={[styles.rowInner, !first && styles.separator]}>
-        <View style={styles.rowTop}>
-          <Text style={styles.facility} numberOfLines={1}>
-            {claim.facility}
-          </Text>
-          <Text style={styles.amount}>{claim.amount}</Text>
-        </View>
-        <Text style={styles.meta}>
-          {claim.service} · {claim.date}
-        </Text>
-        <View style={styles.rowBottom}>
-          <StatusBadge label={claim.status} status={claimStatusTone[claim.status]} />
-          <Text style={styles.ref}>{claim.id}</Text>
-        </View>
-      </View>
-    </View>
-  );
-}
+const isOpen = (s: string) => s !== "Paid" && s !== "Rejected";
 
 export default function ClaimsScreen() {
-  const [filter, setFilter] = useState<Filter>("All");
-  const shown = useMemo(() => (filter === "All" ? claims : claims.filter((c) => c.status === filter)), [filter]);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStack>>();
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const shown = useMemo(
+    () => claims.filter((c) => (filter === "all" ? true : filter === "open" ? isOpen(c.status) : c.status === "Paid")),
+    [filter],
+  );
+  const months = [...new Set(shown.map((c) => c.month))];
+  const total = claims.reduce((sum, c) => sum + parseFloat(c.amount.replace(/[^\d.]/g, "")), 0);
+  const open = claims.filter((c) => isOpen(c.status)).length;
 
   return (
-    <Screen largeTitle="Claims" footer={<TabBar active="Claims" />} padBottom={false}>
-      <SegmentedControl segments={segments} selected={filter} onChange={setFilter} />
+    <Screen bottom={<TabBar active="Claims" />} bottomHandlesInset>
+      <View style={styles.head}>
+        <T v="title" accessibilityRole="header">
+          Claims
+        </T>
+        <T v="body" c={color.ink2}>
+          What NHIS has paid for your care this year.
+        </T>
+      </View>
 
-      {shown.length === 0 ? (
-        <View style={styles.empty}>
-          <Icon name="document-text-outline" size={48} color={colors.tertiaryLabel} />
-          <Text style={styles.emptyTitle}>No {filter} Claims</Text>
-          <Text style={styles.emptyText}>Claims appear here when a facility bills NHIS for your care.</Text>
+      <Card>
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <T v="small" c={color.ink2}>
+              Covered this year
+            </T>
+            <T v="title" style={styles.num}>
+              GH₵ {total.toFixed(2)}
+            </T>
+          </View>
+          <View style={styles.vr} />
+          <View style={styles.stat}>
+            <T v="small" c={color.ink2}>
+              In progress
+            </T>
+            <T v="title" style={styles.num}>
+              {open}
+            </T>
+          </View>
         </View>
-      ) : (
-        <Group
-          header={`${shown.length} ${shown.length === 1 ? "claim" : "claims"}`}
-          footer="Hospitals and pharmacies file claims when you use your NHIS card. Approved claims are paid to the facility, not to you."
-        >
-          {shown.map((c) => (
-            <ClaimRow key={c.id} claim={c} />
-          ))}
-        </Group>
-      )}
+      </Card>
+
+      <View style={styles.list}>
+        <Pills options={filters} value={filter} onChange={setFilter} />
+
+        {shown.length === 0 ? (
+          <View style={styles.empty}>
+            <Icon name="inbox" size={28} color={color.ink2} />
+            <T v="bodyStrong">Nothing here yet</T>
+            <T v="small" c={color.ink2} center>
+              Claims appear when a hospital or pharmacy bills NHIS for your care.
+            </T>
+          </View>
+        ) : (
+          months.map((m) => (
+            <View key={m} style={styles.month}>
+              <T v="label" c={color.ink2}>
+                {m.toUpperCase()}
+              </T>
+              <Card padding="flush">
+                {shown
+                  .filter((c) => c.month === m)
+                  .map((c, i) => (
+                    <ActivityRow
+                      key={c.id}
+                      icon={c.icon}
+                      title={c.facility}
+                      subtitle={`${c.service} · ${c.date}`}
+                      amount={c.amount}
+                      status={{ label: c.status, tone: claimTone[c.status] }}
+                      onPress={() => navigation.navigate("ClaimDetail", { id: c.id })}
+                      divider={i > 0}
+                    />
+                  ))}
+              </Card>
+            </View>
+          ))
+        )}
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { paddingLeft: spacing.lg, backgroundColor: colors.surface },
-  rowInner: { paddingVertical: spacing.md, paddingRight: spacing.lg, gap: 3 },
-  separator: { borderTopWidth: hairline, borderTopColor: colors.separator },
-  rowTop: { flexDirection: "row", justifyContent: "space-between", gap: spacing.md },
-  facility: { flex: 1, color: colors.label, ...type.headline },
-  amount: { color: colors.label, ...type.body, fontVariant: ["tabular-nums"] },
-  meta: { color: colors.secondaryLabel, ...type.subheadline },
-  rowBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 6 },
-  ref: { color: colors.secondaryLabel, ...type.footnote },
-  empty: { alignItems: "center", gap: spacing.sm, paddingVertical: 64, paddingHorizontal: spacing.xl },
-  emptyTitle: { color: colors.label, ...type.title3 },
-  emptyText: { color: colors.secondaryLabel, ...type.subheadline, textAlign: "center" },
+  head: { gap: space[1], marginBottom: -space[3] },
+  stats: { flexDirection: "row", alignItems: "center" },
+  stat: { flex: 1, gap: 2 },
+  num: { fontVariant: ["tabular-nums"] },
+  vr: { width: 1, alignSelf: "stretch", backgroundColor: color.line, marginHorizontal: space[4] },
+  list: { gap: space[5] },
+  month: { gap: space[2] },
+  empty: { alignItems: "center", gap: space[2], paddingVertical: space[10], paddingHorizontal: space[6] },
 });
