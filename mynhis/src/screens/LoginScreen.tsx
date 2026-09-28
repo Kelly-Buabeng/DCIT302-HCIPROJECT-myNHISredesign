@@ -1,197 +1,147 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useState } from "react";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { RootStackParamList } from "../types/navigation";
-import { Colors } from '../constants/colors';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { RootStack } from "../navigation/types";
+import { Button, Field, Icon, Notice, T } from "../components";
+import { color, radius, space } from "../theme";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+// Demo accounts — any password works.
+const DEMO_IDS = ["kwame", "321098765432", "0241234567"];
 
 export default function LoginScreen() {
-  const navigation = useNavigation<NavigationProp>();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const navigation = useNavigation<NativeStackNavigationProp<RootStack>>();
   const insets = useSafeAreaInsets();
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ id?: string; password?: string; form?: string }>({});
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (!username.trim() || !password.trim()) {
-      Alert.alert("Error", "Please fill in all fields");
-      return;
+  const logIn = () => {
+    const next: typeof errors = {};
+    if (!id.trim()) next.id = "Enter your NHIS number or phone number.";
+    if (!password.trim()) next.password = "Enter your password.";
+    if (next.id || next.password) return setErrors(next);
+    if (!DEMO_IDS.includes(id.replace(/[\s-]/g, "").toLowerCase())) {
+      return setErrors({ form: "Those details don't match an account. Check them and try again." });
     }
-    
-    // Simple validation - accepts multiple usernames/NHIS numbers for easy testing
-    const validCredentials = [
-      "kwame", 
-      "NHIS123456789", 
-      "NHIS1234567890",
-      "emmanuel",
-      "mensah"
-    ];
-    
-    if (validCredentials.some(cred => username.toLowerCase() === cred.toLowerCase())) {
-      // Navigate to Home screen on successful login
-      navigation.navigate("Home");
-    } else {
-      Alert.alert("Error", "Invalid username/NHIS number or password");
-    }
-  };
-
-  const handleForgotPassword = () => {
-    Alert.alert("Forgot Password", "Password reset functionality would be implemented here");
-  };
-
-  const handleSignUp = () => {
-    Alert.alert("Sign Up", "Account registration would be implemented here");
+    setErrors({});
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+    }, 600);
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Text style={styles.backIcon}>←</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Login</Text>
-          <View style={styles.headerSpacer} />
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Username or NHIS Number"
-              placeholderTextColor={Colors.textSecondary}
-              value={username}
-              onChangeText={setUsername}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+    <View style={styles.root}>
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <ScrollView contentContainerStyle={styles.grow} keyboardShouldPersistTaps="handled" bounces={false}>
+          <View style={[styles.brand, { paddingTop: insets.top + space[10] }]}>
+            <View style={styles.logo}>
+              <Icon name="plus" size={26} color={color.brand} />
+            </View>
+            <T v="hero" c={color.onBrand}>
+              myNHIS
+            </T>
+            <T v="body" c={color.onBrandMuted}>
+              Your health cover, in your pocket.
+            </T>
           </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor={Colors.textSecondary}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
+          <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, space[6]) }]}>
+            <T v="title" accessibilityRole="header">
+              Log in
+            </T>
+
+            {errors.form ? <Notice tone="danger" icon="alert-circle" title="Couldn't log you in" message={errors.form} /> : null}
+
+            <Field
+              label="NHIS number or phone"
+              placeholder="e.g. 3210 9876 5432"
+              value={id}
+              onChangeText={(t) => {
+                setId(t);
+                setErrors({});
+              }}
               autoCapitalize="none"
               autoCorrect={false}
+              textContentType="username"
+              error={errors.id}
             />
+            <View style={styles.gapSm}>
+              <Field
+                label="Password"
+                placeholder="Your password"
+                secure
+                value={password}
+                onChangeText={(t) => {
+                  setPassword(t);
+                  setErrors({});
+                }}
+                autoCapitalize="none"
+                textContentType="password"
+                onSubmitEditing={logIn}
+                returnKeyType="go"
+                error={errors.password}
+              />
+              <Pressable
+                onPress={() => Alert.alert("Reset password", "We'll text a reset code to the phone number on your NHIS record.")}
+                accessibilityRole="button"
+                hitSlop={10}
+                style={styles.forgot}
+              >
+                <T v="smallStrong" c={color.brand} style={styles.underline}>
+                  Forgot password?
+                </T>
+              </Pressable>
+            </View>
+
+            <View style={styles.actions}>
+              <Button label="Log in" onPress={logIn} loading={loading} />
+              <Button
+                variant="secondary"
+                label="Create an account"
+                onPress={() => Alert.alert("Create an account", "Register at any NHIS district office with your Ghana Card, then log in here.")}
+              />
+            </View>
+
+            <T v="small" c={color.ink2} center>
+              Demo: “kwame” with any password
+            </T>
           </View>
-
-          <TouchableOpacity onPress={handleForgotPassword}>
-            <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Bottom Section */}
-      <View style={styles.bottomSection}>
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleSignUp}>
-          <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
-        </TouchableOpacity>
-
-        <View style={styles.bottomSpacing} />
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.backgroundSecondary,
+  root: { flex: 1, backgroundColor: color.brand },
+  flex: { flex: 1 },
+  grow: { flexGrow: 1 },
+  brand: { paddingHorizontal: space[6], paddingBottom: space[10], gap: space[2] },
+  logo: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: color.gold,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: space[4],
   },
-  content: {
-    flex: 1,
+  sheet: {
+    flexGrow: 1,
+    backgroundColor: color.bg,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    paddingHorizontal: space[5],
+    paddingTop: space[8],
+    gap: space[5],
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.background,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 8,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.textPrimary,
-  },
-  headerTitle: {
-    color: Colors.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-    paddingRight: 48, // Balance the back button
-  },
-  headerSpacer: {
-    width: 48,
-  },
-  form: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  inputContainer: {
-    marginBottom: 12,
-  },
-  input: {
-    backgroundColor: Colors.inputBackground,
-    borderRadius: 12,
-    height: 56,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: Colors.textPrimary,
-    borderWidth: 0,
-  },
-  forgotPassword: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    textDecorationLine: 'underline',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-  },
-  bottomSection: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  loginButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  loginButtonText: {
-    color: Colors.textInverse,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  signUpText: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-    paddingVertical: 8,
-  },
-  bottomSpacing: {
-    height: 20,
-  },
+  gapSm: { gap: space[2] },
+  forgot: { alignSelf: "flex-end", paddingVertical: space[1] },
+  underline: { textDecorationLine: "underline" },
+  actions: { gap: space[3], marginTop: space[2] },
 });
